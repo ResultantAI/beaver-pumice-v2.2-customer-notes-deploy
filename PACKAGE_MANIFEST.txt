@@ -1,0 +1,204 @@
+═══════════════════════════════════════════════════════════════════
+  BEAVER PUMICE v2.2 - CUSTOMER DEFAULT NOTES DEPLOYMENT PACKAGE
+═══════════════════════════════════════════════════════════════════
+
+Package Date: February 2, 2026
+Version: 2.2
+Fix: Customer default notes now appear on printed tickets
+Issue Reported By: Brent
+Package Size: 376KB
+
+─────────────────────────────────────────────────────────────────
+PACKAGE CONTENTS
+─────────────────────────────────────────────────────────────────
+
+📄 Documentation Files:
+  ├── README.md                    (8.5KB)  - Start here!
+  ├── DEPLOY.md                    (8.5KB)  - Deployment instructions
+  ├── TESTING.md                   (15KB)   - Test scripts & verification
+  ├── CHANGES.md                   (14KB)   - Technical implementation details
+  └── PACKAGE_MANIFEST.txt         (this file)
+
+💻 Application Files:
+  ├── index.html                   (300KB)  - Main application
+  └── netlify/functions/
+      ├── customers.js             (3.5KB)  - Fetches default notes from Airtable
+      └── create-ticket.js         (9.0KB)  - Saves customer notes to tickets
+
+─────────────────────────────────────────────────────────────────
+QUICK START
+─────────────────────────────────────────────────────────────────
+
+1. Read README.md first
+2. Follow instructions in DEPLOY.md
+3. Run tests from TESTING.md
+4. Verify customer notes appear on printed tickets
+
+⚠️  PREREQUISITE: Create "Customer Note" field in Airtable Tickets table
+
+─────────────────────────────────────────────────────────────────
+WHAT THIS FIXES
+─────────────────────────────────────────────────────────────────
+
+BEFORE:
+  • Customer default notes not fetched from Airtable
+  • No preview when selecting customer
+  • Notes don't appear on printed tickets
+  • Have to manually type notes every time
+
+AFTER:
+  • API fetches customer default notes
+  • Yellow preview box shows note when customer selected
+  • Customer note automatically included on ticket creation
+  • Customer note prints on ticket with 📌 icon
+
+─────────────────────────────────────────────────────────────────
+FILE CHANGES SUMMARY
+─────────────────────────────────────────────────────────────────
+
+1. customers.js (Line 86)
+   Added: defaultNote: record.fields['Default Note'] || ''
+
+2. create-ticket.js (Lines 114-116)
+   Added: Save ticketData.customerNote to Airtable
+
+3. index.html (Multiple changes)
+   • Lines 588-596: Yellow preview box HTML
+   • Lines 2825-2873: handleCustomerChange() - show/hide note
+   • Lines 4882-4885: Fetch customer default note
+   • Line 4994: Include customerNote in API request
+   • Line 5033: Store in local ticket object
+   • Line 5076: Hide preview after submission
+
+─────────────────────────────────────────────────────────────────
+DEPLOYMENT METHODS
+─────────────────────────────────────────────────────────────────
+
+Option A: Netlify UI (Drag & Drop)
+  1. Log in to Netlify
+  2. Drag this folder onto deploy dropzone
+  3. Wait 60 seconds
+  4. Test
+
+Option B: Git Deploy
+  1. Copy files to your repo
+  2. git add + commit + push
+  3. Netlify auto-deploys
+  4. Test
+
+─────────────────────────────────────────────────────────────────
+TESTING CHECKLIST
+─────────────────────────────────────────────────────────────────
+
+After deployment, verify:
+
+[ ] Test 1: API returns customer default notes (browser console)
+[ ] Test 2: DOM elements exist (browser console)
+[ ] Test 3: Preview box appears when customer selected
+[ ] Test 4: Create test ticket for Granite customer
+[ ] Test 5: Print ticket - verify note appears with 📌 icon
+[ ] Test 6: Select customer without note - no preview appears
+[ ] Test 7: All functionality works as expected
+
+See TESTING.md for detailed test scripts.
+
+─────────────────────────────────────────────────────────────────
+AIRTABLE REQUIREMENTS
+─────────────────────────────────────────────────────────────────
+
+CRITICAL: Add this field before deploying:
+
+Table: Tickets
+Field Name: Customer Note (exact case)
+Field Type: Long Text
+
+Without this field, customer notes won't save to tickets!
+
+Optional: Add default notes to customers:
+
+Table: Customers
+Field Name: Default Note
+Example Values:
+  • "Granite requires signature on delivery"
+  • "Gate code: 1234"
+  • "Call dispatch before delivery"
+
+─────────────────────────────────────────────────────────────────
+FILE INTEGRITY
+─────────────────────────────────────────────────────────────────
+
+Verify all files are present:
+
+Documentation (5 files):
+  ✓ README.md
+  ✓ DEPLOY.md
+  ✓ TESTING.md
+  ✓ CHANGES.md
+  ✓ PACKAGE_MANIFEST.txt
+
+Application (3 files):
+  ✓ index.html
+  ✓ netlify/functions/customers.js
+  ✓ netlify/functions/create-ticket.js
+
+Total: 8 files, 376KB
+
+─────────────────────────────────────────────────────────────────
+BACKWARD COMPATIBILITY
+─────────────────────────────────────────────────────────────────
+
+✅ Works if Airtable field doesn't exist (will retry without)
+✅ Works if customer has no default note (empty string)
+✅ Works with existing tickets (no retroactive changes)
+✅ Doesn't affect customers without default notes
+✅ No breaking changes to existing functionality
+
+─────────────────────────────────────────────────────────────────
+SUCCESS CRITERIA
+─────────────────────────────────────────────────────────────────
+
+Deployment is successful when:
+
+1. Yellow preview box shows customer note when selected
+2. Customer note is saved to Airtable Tickets table
+3. Customer note appears on printed ticket with 📌 icon
+4. Customer Note is separate from Ticket Note field
+5. Works for all customers with default notes
+6. No errors in browser console or Netlify logs
+
+─────────────────────────────────────────────────────────────────
+SUPPORT
+─────────────────────────────────────────────────────────────────
+
+If you encounter issues:
+
+1. Check DEPLOY.md troubleshooting section
+2. Run all tests from TESTING.md
+3. Verify Airtable field exists
+4. Check Netlify function logs
+5. Check browser console for errors
+6. Verify files deployed correctly
+
+─────────────────────────────────────────────────────────────────
+VERSION HISTORY
+─────────────────────────────────────────────────────────────────
+
+v2.2 (Feb 2026) - Customer default notes on tickets
+v2.1 (Jan 2026) - Ticket pricing, freight, truck text field
+v2.0 (Dec 2025) - Major refactor
+v1.x (2025)     - Initial releases
+
+─────────────────────────────────────────────────────────────────
+LICENSE & CREDITS
+─────────────────────────────────────────────────────────────────
+
+Client: Beaver Pumice LLC
+Developer: ResultantAI (via Claude)
+Platform: Netlify + Airtable
+Generated: February 2, 2026
+
+═══════════════════════════════════════════════════════════════════
+
+                       READY TO DEPLOY ✅
+
+═══════════════════════════════════════════════════════════════════
