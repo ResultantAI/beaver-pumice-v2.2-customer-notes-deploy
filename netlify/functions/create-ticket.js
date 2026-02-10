@@ -239,17 +239,68 @@ exports.handler = async (event, context) => {
 
     const record = await response.json();
     console.log('Ticket created successfully:', record.id);
-    
-    // Return the record ID and ticket number for printing
-    // printUrl uses relative path so it works on any deployment
+
+    // v2.2-HOTFIX: Wait briefly for Airtable formulas to calculate, then refetch
+    // This prevents intermittent issues where print shows zero/wrong values
+    // because formulas (Net Tons, Net Yards, etc.) haven't finished calculating
+    await new Promise(resolve => setTimeout(resolve, 800));
+
+    // Refetch the complete record with all calculated fields
+    const refetchUrl = `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TICKETS_TABLE)}/${record.id}`;
+    const refetchResponse = await fetch(refetchUrl, {
+      headers: { 'Authorization': `Bearer ${AIRTABLE_TOKEN}` }
+    });
+
+    let completeRecord = record;
+    if (refetchResponse.ok) {
+      completeRecord = await refetchResponse.json();
+      console.log('Refetched ticket with calculated values');
+    } else {
+      console.warn('Could not refetch ticket, using initial record');
+    }
+
+    // Helper to safely get lookup fields (come as arrays)
+    const getLookup = (field) => Array.isArray(field) ? (field[0] || '') : (field || '');
+
+    // Return complete ticket data with all calculated values
+    // This ensures frontend has accurate data for printing immediately
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({
         success: true,
-        id: record.id,
-        ticketNumber: record.fields['Ticket Number'],
-        printUrl: `/ticket-viewer.html?id=${record.id}`
+        id: completeRecord.id,
+        ticketNumber: completeRecord.fields['Ticket Number'],
+        printUrl: `/ticket-viewer.html?id=${completeRecord.id}`,
+        // Include all calculated field values for immediate use
+        ticket: {
+          id: completeRecord.id,
+          airtableId: completeRecord.id,
+          number: completeRecord.fields['Ticket Number'] || 0,
+          customer: getLookup(completeRecord.fields['Customer Name']),
+          customerId: completeRecord.fields['Customer'] ? completeRecord.fields['Customer'][0] : null,
+          carrier: getLookup(completeRecord.fields['Hauling For Name']),
+          carrierId: completeRecord.fields['Hauling For'] ? completeRecord.fields['Hauling For'][0] : null,
+          truck: completeRecord.fields['Truck Text'] || getLookup(completeRecord.fields['Truck Name']),
+          product: getLookup(completeRecord.fields['Product Name']),
+          productId: completeRecord.fields['Product'] ? completeRecord.fields['Product'][0] : null,
+          gross: completeRecord.fields['Gross Weight lbs'] || 0,
+          tare: completeRecord.fields['Tare Weight lbs'] || 0,
+          netLbs: completeRecord.fields['Net Weight lbs'] || 0,
+          netTons: completeRecord.fields['Net Tons'] || 0,
+          netYards: completeRecord.fields['Net Yards'] || 0,
+          po: completeRecord.fields['PO Number'] || '',
+          note: completeRecord.fields['Ticket Note'] || '',
+          customerNote: completeRecord.fields['Customer Note'] || '',
+          freightCost: completeRecord.fields['Freight Cost'] || 0,
+          freightCharge: completeRecord.fields['Freight Charge'] || 0,
+          freightMargin: completeRecord.fields['Freight Margin'] || 0,
+          pumiceCharge: completeRecord.fields['Pumice Charge'] || 0,
+          totalCharge: completeRecord.fields['Total Charge'] || 0,
+          date: completeRecord.fields['Created'] ? new Date(completeRecord.fields['Created']).toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }) : '',
+          status: completeRecord.fields['Status'] || 'Open',
+          printUrl: `/ticket-viewer.html?id=${completeRecord.id}`
+        }
       })
     };
 

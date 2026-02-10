@@ -5013,9 +5013,12 @@ Beaver Pumice • Chemult, Oregon
         }
         
         const result = await response.json();
-        
-        // Create local ticket object with data from API response
-        const newTicket = {
+
+        // v2.2-HOTFIX: Use complete ticket data from API response
+        // API now returns the full ticket with calculated values from Airtable
+        // This prevents intermittent print issues where values were different
+        const newTicket = result.ticket || {
+          // Fallback to constructed ticket if API doesn't return full data (old version)
           id: result.id,
           airtableId: result.id,
           number: result.ticketNumber || (tickets.length > 0 ? Math.max(...tickets.map(t => t.number)) + 1 : 4744),
@@ -5023,23 +5026,31 @@ Beaver Pumice • Chemult, Oregon
           customerId: ticketData.customerId,
           carrier: carrierSelect.selectedOptions[0]?.text || '',
           carrierId: ticketData.carrierId,
-          truck: truckInput.value.trim(), // Truck is text
+          truck: truckInput.value.trim(),
           product: productSelect.selectedOptions[0]?.text || '',
           productId: ticketData.productId,
           gross: ticketData.gross,
           tare: ticketData.tare,
           po: ticketData.po,
           note: ticketData.note,
-          customerNote: ticketData.customerNote, // Customer's default note
+          customerNote: ticketData.customerNote,
           freightCost: ticketData.freightCost,
           freightCharge: ticketData.freightCharge,
           freightMargin: ticketData.freightCharge - ticketData.freightCost,
           date: new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }),
           printUrl: result.printUrl
         };
-        
+
         tickets.unshift(newTicket);
         lastCreatedTicket = newTicket;
+
+        console.log('✅ Ticket created with verified values from Airtable:', {
+          number: newTicket.number,
+          netTons: newTicket.netTons,
+          netYards: newTicket.netYards,
+          pumiceCharge: newTicket.pumiceCharge,
+          freightCharge: newTicket.freightCharge
+        });
         
         // Try to send email notification (non-blocking)
         // v70: Use email OR contactEmail - whichever has a value
