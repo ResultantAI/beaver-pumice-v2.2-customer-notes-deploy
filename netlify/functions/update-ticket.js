@@ -80,7 +80,9 @@ exports.handler = async (event, context) => {
     const optionalFields = {};
     
     // v2.2: Track if status is changing to Closed for auto-email
+    // v2.2-HOTFIX: Track if changing to Void (don't send email for voided tickets)
     let statusChangingToClosed = false;
+    let statusChangingToVoid = false;
     let previousStatus = updateData.previousStatus || null;
 
     // Always update weights if provided
@@ -143,9 +145,14 @@ exports.handler = async (event, context) => {
       const validStatuses = ['Open', 'Hold', 'Closed', 'Void'];
       if (validStatuses.includes(newStatus)) {
         fields['Status'] = newStatus;
-        // v2.2: Track if changing to Closed
+        // v2.2: Track if changing to Closed (send email)
         if (newStatus === 'Closed' && previousStatus !== 'Closed') {
           statusChangingToClosed = true;
+        }
+        // v2.2-HOTFIX: Track if changing to Void (DON'T send email)
+        if (newStatus === 'Void') {
+          statusChangingToVoid = true;
+          statusChangingToClosed = false; // Override - don't send email for void
         }
       } else {
         return {
@@ -275,13 +282,17 @@ exports.handler = async (event, context) => {
     }
 
     const record = await response.json();
-    
+
     // v2.2: Auto-email on close
+    // v2.2-HOTFIX: Don't send emails for voided tickets
     let emailSent = false;
     let emailError = null;
     let emailTo = null;
-    
-    if (statusChangingToClosed && RESEND_API_KEY) {
+
+    if (statusChangingToVoid) {
+      console.log('=== TICKET VOIDED - NO EMAIL SENT ===');
+      console.log('Ticket voided - customer will not receive email notification');
+    } else if (statusChangingToClosed && RESEND_API_KEY) {
       console.log('=== AUTO-EMAIL ON CLOSE ===');
 
       // FIX: Fetch complete ticket record with all formula fields

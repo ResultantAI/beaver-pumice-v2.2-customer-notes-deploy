@@ -5054,12 +5054,18 @@ Beaver Pumice • Chemult, Oregon
         
         // Try to send email notification (non-blocking)
         // v70: Use email OR contactEmail - whichever has a value
+        // v2.2-HOTFIX: Don't send emails for voided tickets
         try {
-          const customer = CUSTOMERS.find(c => 
+          const customer = CUSTOMERS.find(c =>
             c.airtableId === ticketData.customerId || c.id === ticketData.customerId
           );
           const customerEmail = customer?.contactEmail || customer?.email || customer?.billToEmail;
-          if (customer && customer.emailReceipts && customerEmail) {
+          const ticketStatus = newTicket.status || 'Open';
+
+          // Don't send email if ticket is voided
+          if (ticketStatus === 'Void') {
+            console.log('Email not sent: Ticket is voided');
+          } else if (customer && customer.emailReceipts && customerEmail) {
             console.log('Sending ticket email to:', customerEmail);
             sendTicketEmail(newTicket.id, newTicket, customer, customerEmail).then(result => {
               if (result.sent) {
