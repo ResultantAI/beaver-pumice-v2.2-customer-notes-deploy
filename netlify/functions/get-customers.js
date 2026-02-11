@@ -50,38 +50,13 @@ exports.handler = async (event, context) => {
         name: record.fields['Customer Name'] || '',
         email: record.fields['Email'] || '',
         phone: record.fields['Phone'] || '',
-        // Bill To (for invoicing)
-        billToEmail: record.fields['Bill To Email'] || '',
-        billToAddress: record.fields['Bill To Address'] || '',
-        billToCity: record.fields['Bill To City'] || '',
-        billToState: record.fields['Bill To State'] || '',
-        billToZip: record.fields['Bill To Zip'] || '',
-        // Ship To Address (delivery destination)
-        shipToAddress: record.fields['Ship To Address'] || '',
-        shipToCity: record.fields['Ship To City'] || '',
-        shipToState: record.fields['Ship To State'] || '',
-        shipToZip: record.fields['Ship To Zip'] || '',
-        // Legacy address fields (for backwards compatibility)
-        address1: record.fields['Bill To Address'] || record.fields['Address1'] || '',
-        city: record.fields['Bill To City'] || record.fields['City'] || '',
-        state: record.fields['Bill To State'] || record.fields['State'] || '',
-        zip: record.fields['Bill To Zip'] || record.fields['Zip'] || '',
-        pricingMethod: record.fields['Pricing Method'] || '',
+        address1: record.fields['Address1'] || '',
+        city: record.fields['City'] || '',
+        state: record.fields['State'] || '',
+        zip: record.fields['Zip'] || '',
         priceYard: record.fields['Price Yard'] || null,
         priceTon: record.fields['Price Ton'] || null,
-        // Phase 2: Allowed Products for customer-product filtering
-        allowedProducts: record.fields['Allowed Products'] || [], // Array of Product record IDs
-        contactEmail: record.fields['Contact Email'] || '',
-        emailReceipts: record.fields['Email Receipts'] || false,
-        qbCustomerName: record.fields['QB Customer Name'] || '',
-        defaultNote: record.fields['Default Note'] || '', // Note that appears on all tickets for this customer
-        billingType: record.fields['Billing Type'] || '1', // 1-7 or C for custom
-        billingNotes: record.fields['Billing Notes'] || '', // Special billing instructions
-        // Freight settings (when BP arranges trucking)
-        freightMethod: record.fields['Freight Method'] || '', // per_ton, per_yard, flat, delivered - for customer billing
-        freightRate: record.fields['Freight Rate'] || null, // What customer pays for freight (rate per unit)
-        freightCostMethod: record.fields['Freight Cost Method'] || '', // per_ton, per_yard, flat - for truck payment (can differ from freightMethod)
-        freightCost: record.fields['Freight Cost'] || null, // What BP pays carrier (rate per unit)
+        notes: record.fields['Notes'] || record.fields['Default Note'] || '',
       }));
 
       allRecords = allRecords.concat(mappedRecords);

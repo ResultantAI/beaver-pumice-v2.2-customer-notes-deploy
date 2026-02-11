@@ -59,10 +59,6 @@
     .ticket-row { transition: background-color 0.15s ease; cursor: pointer; }
     .ticket-row:hover { background-color: rgba(212, 169, 33, 0.08) !important; }
     
-    /* Hide pricing from operators */
-    body.role-operator .amount-column { display: none !important; }
-    body.role-operator .pricing-info { display: none !important; }
-    
     .activity-card { transition: all 0.2s ease; cursor: pointer; }
     .activity-card:hover { background-color: #f1f5f9; transform: translateX(4px); }
     
@@ -79,9 +75,8 @@
     .quick-btn:hover { transform: translateY(-2px); }
     .quick-btn:active { transform: translateY(0); }
     
-    .badge-role-admin { background: linear-gradient(135deg, #b8860b, #d4a921); }
-    .badge-role-finance { background: linear-gradient(135deg, #059669, #10b981); }
-    .badge-role-user { background: linear-gradient(135deg, #475569, #64748b); }
+    .role-admin { background: linear-gradient(135deg, #b8860b, #d4a921); }
+    .role-user { background: linear-gradient(135deg, #475569, #64748b); }
     
     .login-bg { background: linear-gradient(135deg, #0d1117 0%, #1a2332 50%, #0d1117 100%); }
     
@@ -142,7 +137,6 @@
     .toast-success { background: #10b981; color: white; }
     .toast-error { background: #ef4444; color: white; }
     .toast-info { background: #3b82f6; color: white; }
-    .toast-warning { background: #f59e0b; color: white; }
   </style>
 </head>
 <body class="bg-slate-100 min-h-screen">
@@ -173,8 +167,6 @@
             <select id="login-user" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-gold-500 text-lg bg-white cursor-pointer">
               <option value="">Select your role...</option>
               <option value="admin">🔑 Lucas (Admin)</option>
-              <option value="admin2">🔑 Brent (Admin)</option>
-              <option value="finance">💰 Jesse (Finance)</option>
               <option value="user">👷 Operator</option>
             </select>
           </div>
@@ -194,7 +186,8 @@
         
         <div class="mt-6 p-4 bg-slate-50 rounded-xl">
           <p class="text-xs text-slate-500 text-center">
-            Contact your administrator if you need PIN access.
+            <strong>Demo Access:</strong><br>
+            Admin PIN: <span class="font-mono bg-white px-2 py-0.5 rounded">1234</span> &nbsp;•&nbsp; Operator PIN: <span class="font-mono bg-white px-2 py-0.5 rounded">0000</span>
           </p>
         </div>
       </div>
@@ -241,7 +234,7 @@
           </div>
           <div>
             <h1 class="text-xl font-bold tracking-tight text-white">BEAVER PUMICE</h1>
-            <p class="text-slate-400 text-xs tracking-widest uppercase">Chemult, Oregon <span class="text-gold-500 ml-2">v2.3</span></p>
+            <p class="text-slate-400 text-xs tracking-widest uppercase">Chemult, Oregon</p>
           </div>
         </div>
         <div class="flex items-center gap-4">
@@ -249,7 +242,7 @@
             <p class="text-slate-300 text-sm font-medium" id="user-name">Admin</p>
             <p class="text-gold-400 font-mono text-xs" id="user-role-display">Administrator</p>
           </div>
-          <div id="user-badge" class="badge-role-admin w-10 h-10 rounded-full flex items-center justify-center">
+          <div id="user-badge" class="role-admin w-10 h-10 rounded-full flex items-center justify-center">
             <span class="text-white text-lg" id="user-icon">👑</span>
           </div>
           <button type="button" onclick="logout()" class="text-slate-400 hover:text-white transition-colors p-2" title="Sign Out">
@@ -342,7 +335,7 @@
               <span class="text-3xl">👥</span><span>Customers</span>
             </button>
             <button type="button" onclick="showView('trucks')" class="quick-btn bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-5 px-4 rounded-xl transition-all flex flex-col items-center gap-2">
-              <span class="text-3xl">🚛</span><span>Carriers</span>
+              <span class="text-3xl">🚛</span><span>Trucks</span>
             </button>
             <button type="button" onclick="showView('reports')" class="quick-btn bg-blue-100 hover:bg-blue-200 text-blue-700 font-semibold py-5 px-4 rounded-xl transition-all flex flex-col items-center gap-2">
               <span class="text-3xl">📈</span><span>Reports</span>
@@ -391,7 +384,7 @@
               <span class="text-3xl">👥</span><span>Customers</span>
             </button>
             <button type="button" onclick="showView('trucks')" class="quick-btn bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-5 px-4 rounded-xl transition-all flex flex-col items-center gap-2">
-              <span class="text-3xl">🚛</span><span>Carriers</span>
+              <span class="text-3xl">🚛</span><span>Trucks</span>
             </button>
           </div>
         </div>
@@ -399,36 +392,6 @@
         <div class="bg-white rounded-2xl shadow-md p-6">
           <h2 class="text-lg font-bold text-slate-900 mb-4">Recent Tickets</h2>
           <div class="space-y-3" id="operator-recent-activity"></div>
-        </div>
-        
-        <!-- Help & Training Section (Operator) -->
-        <div class="bg-white rounded-2xl shadow-md p-6" id="operator-help-section">
-          <h2 class="text-lg font-bold text-slate-900 mb-4">📚 Help & Training</h2>
-          <div class="grid grid-cols-2 gap-4">
-            <a href="operator-guide.html" class="bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-200 rounded-xl p-4 transition-all block">
-              <div class="flex items-center gap-3">
-                <span class="text-2xl">👷</span>
-                <div>
-                  <p class="font-semibold text-slate-900">Operator Guide</p>
-                  <p class="text-xs text-slate-500">Step-by-step instructions</p>
-                </div>
-              </div>
-            </a>
-            <a href="quick-reference.html" class="bg-purple-50 hover:bg-purple-100 border-2 border-purple-200 rounded-xl p-4 transition-all block">
-              <div class="flex items-center gap-3">
-                <span class="text-2xl">🖨️</span>
-                <div>
-                  <p class="font-semibold text-slate-900">Print Cheat Sheet</p>
-                  <p class="text-xs text-slate-500">Quick reference card</p>
-                </div>
-              </div>
-            </a>
-          </div>
-          <div class="mt-4 bg-slate-100 rounded-xl p-3 text-center">
-            <p class="text-sm text-slate-600">
-              Need help? Call the office or email <a href="mailto:support@resultantai.com" class="text-gold-600 hover:underline">support@resultantai.com</a>
-            </p>
-          </div>
         </div>
       </div>
 
@@ -457,7 +420,8 @@
                 </div>
               </div>
               <div class="flex gap-2">
-                <button type="button" onclick="printNewTicket()" class="bg-white text-emerald-600 font-semibold py-2 px-4 rounded-lg text-sm hover:bg-emerald-50 transition-all">📄 Print Ticket</button>
+                <button type="button" onclick="printNewTicket()" class="bg-white text-emerald-600 font-semibold py-2 px-4 rounded-lg text-sm hover:bg-emerald-50 transition-all">🖨️ Print Now</button>
+                <button type="button" onclick="copyNewTicket()" class="bg-white/20 text-white font-semibold py-2 px-4 rounded-lg text-sm hover:bg-white/30 transition-all">📋 Copy</button>
                 <button type="button" onclick="hideSuccessBanner()" class="bg-white/20 text-white font-semibold py-2 px-4 rounded-lg text-sm hover:bg-white/30 transition-all">✕ Close</button>
               </div>
             </div>
@@ -482,44 +446,17 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2">Truck <span class="text-gold-600">*</span></label>
-                <input type="text" id="ticket-truck" required placeholder="e.g., 12 Mike S or Double J #4" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-gold-500 text-lg bg-white">
+                <input type="text" id="ticket-truck" required placeholder="e.g., 12 Mike S or Double J #4" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-gold-500 text-lg">
               </div>
               <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2">Product <span class="text-gold-600">*</span></label>
                 <select id="ticket-product" required class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-gold-500 text-lg bg-white">
                   <option value="">Select product...</option>
                 </select>
-                <p id="product-filter-notice" class="text-xs text-emerald-600 mt-1 hidden">
-                  <span class="inline-flex items-center gap-1">✓ Filtered for this customer</span>
-                </p>
               </div>
             </div>
 
             <div class="bg-slate-50 rounded-xl p-5 border border-slate-200">
-              <!-- Scale Connection Panel -->
-              <div id="scale-controls" class="bg-blue-50 rounded-xl p-4 mb-4 border border-blue-100">
-                <div class="flex items-center justify-between mb-3">
-                  <div>
-                    <h4 class="font-semibold text-slate-800 flex items-center gap-2">
-                      <span>⚖️</span> Rice Lake 880 Scale
-                    </h4>
-                    <div id="scale-status" class="text-sm">
-                      <span class="inline-flex items-center text-slate-500">
-                        <span class="w-2 h-2 bg-slate-400 rounded-full mr-2"></span>Scale Not Connected
-                      </span>
-                    </div>
-                  </div>
-                  <button id="scale-connect-btn" onclick="toggleScaleConnection()" 
-                    class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors">
-                    🔌 Connect Scale
-                  </button>
-                </div>
-                <div id="scale-live-display" class="text-center py-2 hidden">
-                  <div class="text-xs text-slate-500 uppercase tracking-wide">Live Reading</div>
-                  <div id="scale-live-reading" class="text-3xl font-mono font-bold text-blue-600">— lbs</div>
-                </div>
-              </div>
-
               <h3 class="font-semibold text-slate-800 mb-4 flex items-center gap-2">
                 <span class="w-8 h-8 bg-slate-200 rounded-lg flex items-center justify-center text-lg">⚖️</span>
                 Scale Weights
@@ -527,28 +464,18 @@
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label class="block text-sm font-semibold text-slate-700 mb-2">Tare Weight (lbs) <span class="text-gold-600">*</span></label>
-                  <div class="flex gap-2">
-                    <input type="number" id="ticket-tare" required placeholder="Empty truck weight" class="flex-1 px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-gold-500 text-lg font-mono bg-white">
-                    <button type="button" onclick="captureTareWeight()" class="scale-capture-btn px-4 py-3 bg-blue-100 border-2 border-blue-200 rounded-xl font-medium text-blue-700 hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled title="Capture from scale">
-                      📥
-                    </button>
-                  </div>
+                  <input type="number" id="ticket-tare" required placeholder="Empty truck weight" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-gold-500 text-lg font-mono bg-white">
                   <p class="text-xs text-slate-400 mt-1">Weigh truck before loading</p>
                 </div>
                 <div>
                   <label class="block text-sm font-semibold text-slate-700 mb-2">Gross Weight (lbs) <span class="text-gold-600">*</span></label>
-                  <div class="flex gap-2">
-                    <input type="number" id="ticket-gross" required placeholder="Loaded truck weight" class="flex-1 px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-gold-500 text-lg font-mono bg-white">
-                    <button type="button" onclick="captureGrossWeight()" class="scale-capture-btn px-4 py-3 bg-green-100 border-2 border-green-200 rounded-xl font-medium text-green-700 hover:bg-green-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled title="Capture from scale">
-                      📤
-                    </button>
-                  </div>
+                  <input type="number" id="ticket-gross" required placeholder="Loaded truck weight" class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-gold-500 text-lg font-mono bg-white">
                   <p class="text-xs text-slate-400 mt-1">Weigh truck after loading</p>
                 </div>
               </div>
 
               <div id="calculations" class="hidden mt-5 pt-5 border-t border-slate-200">
-                <div class="grid grid-cols-4 gap-4">
+                <div class="grid grid-cols-3 gap-4">
                   <div class="text-center bg-white rounded-xl p-4 shadow-sm">
                     <p class="text-xs text-slate-500 uppercase tracking-wide font-semibold">Net Weight</p>
                     <p class="text-2xl font-bold font-mono text-slate-900 mt-1"><span id="calc-net">0</span></p>
@@ -564,11 +491,6 @@
                     <p class="text-2xl font-bold font-mono text-blue-600 mt-1" id="calc-yards">—</p>
                     <p class="text-xs text-blue-400">yards</p>
                   </div>
-                  <div class="text-center bg-gold-50 rounded-xl p-4 shadow-sm border border-gold-200">
-                    <p class="text-xs text-gold-700 uppercase tracking-wide font-semibold">Est. Amount</p>
-                    <p class="text-2xl font-bold font-mono text-gold-700 mt-1" id="calc-amount">$0.00</p>
-                    <p class="text-xs text-gold-500" id="calc-rate-info">—</p>
-                  </div>
                 </div>
               </div>
             </div>
@@ -581,49 +503,6 @@
               <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2">Ticket Note <span class="text-slate-400 font-normal">(optional)</span></label>
                 <input type="text" id="ticket-note" placeholder="Special instructions..." class="w-full px-4 py-3 border-2 border-slate-200 rounded-xl focus:border-gold-500 bg-white">
-              </div>
-            </div>
-            
-            <!-- Customer Default Note Display -->
-            <div id="customer-default-note-container" class="hidden mb-4 p-3 bg-amber-50 border-2 border-amber-200 rounded-xl">
-              <div class="flex items-start gap-2">
-                <span class="text-amber-600">📌</span>
-                <div>
-                  <p class="text-sm font-semibold text-amber-800">Customer Note (will appear on ticket):</p>
-                  <p id="customer-default-note-display" class="text-amber-900 mt-1"></p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Freight Section (for when Beaver Pumice arranges trucking) - hidden by default -->
-            <div id="freight-section" class="mb-4 p-4 bg-blue-50 border-2 border-blue-200 rounded-xl hidden">
-              <div class="flex items-center gap-2 mb-3">
-                <span class="text-blue-600 text-lg">🚚</span>
-                <h4 class="font-semibold text-blue-800">Freight (optional)</h4>
-                <span class="text-xs text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">When BP arranges trucking</span>
-              </div>
-              <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label class="block text-sm font-semibold text-slate-700 mb-2">Freight Cost <span class="text-slate-400 font-normal">(pay to carrier)</span></label>
-                  <div class="relative">
-                    <span class="absolute left-3 top-3 text-slate-500">$</span>
-                    <input type="number" id="ticket-freight-cost" placeholder="0.00" step="0.01" min="0" class="w-full pl-8 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 bg-white" oninput="calculateFreightMargin()">
-                  </div>
-                </div>
-                <div>
-                  <label class="block text-sm font-semibold text-slate-700 mb-2">Freight Charge <span class="text-slate-400 font-normal">(bill to customer)</span></label>
-                  <div class="relative">
-                    <span class="absolute left-3 top-3 text-slate-500">$</span>
-                    <input type="number" id="ticket-freight-charge" placeholder="0.00" step="0.01" min="0" class="w-full pl-8 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-500 bg-white" oninput="calculateFreightMargin()">
-                  </div>
-                </div>
-                <div>
-                  <label class="block text-sm font-semibold text-slate-700 mb-2">Freight Margin <span class="text-slate-400 font-normal">(profit)</span></label>
-                  <div class="relative">
-                    <span class="absolute left-3 top-3 text-slate-500">$</span>
-                    <input type="text" id="ticket-freight-margin" readonly class="w-full pl-8 pr-4 py-3 border-2 border-green-200 rounded-xl bg-green-50 text-green-700 font-semibold">
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -662,13 +541,11 @@
               <thead class="bg-slate-100">
                 <tr>
                   <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">Ticket</th>
-                  <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider hidden sm:table-cell">Date</th>
                   <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider">Customer</th>
                   <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider hidden md:table-cell">Product</th>
                   <th class="px-6 py-4 text-left text-xs font-bold text-slate-600 uppercase tracking-wider hidden lg:table-cell">Carrier / Truck</th>
                   <th class="px-6 py-4 text-right text-xs font-bold text-slate-600 uppercase tracking-wider">Tons</th>
                   <th class="px-6 py-4 text-right text-xs font-bold text-slate-600 uppercase tracking-wider hidden sm:table-cell">Yards</th>
-                  <th class="px-6 py-4 text-right text-xs font-bold text-slate-600 uppercase tracking-wider hidden sm:table-cell amount-column">$ Amount</th>
                   <th class="px-6 py-4 text-center text-xs font-bold text-slate-600 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
@@ -745,7 +622,7 @@
         </div>
       </div>
 
-      <!-- ==================== CARRIERS VIEW ==================== -->
+      <!-- ==================== TRUCKS VIEW ==================== -->
       <div id="view-trucks" class="view-content hidden">
         <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
           <div class="bg-gradient-to-r from-slate-900 to-slate-800 px-6 py-5 flex items-center justify-between flex-wrap gap-4">
@@ -754,20 +631,29 @@
                 <span class="text-slate-900 text-xl">🚛</span>
               </div>
               <div>
-                <h2 class="text-xl font-bold text-white">Carriers</h2>
-                <p class="text-slate-400 text-sm">Manage freight companies</p>
+                <h2 class="text-xl font-bold text-white">Trucks & Carriers</h2>
+                <p class="text-slate-400 text-sm">Manage trucks and freight companies</p>
               </div>
             </div>
             <div class="flex items-center gap-3" id="trucks-admin-actions">
-              <button type="button" onclick="openAddCarrierModal()" class="bg-gold-500 hover:bg-gold-600 text-slate-900 font-semibold py-2.5 px-4 rounded-xl text-sm transition-all flex items-center gap-2">
+              <button type="button" onclick="openAddCarrierModal()" class="bg-slate-700 hover:bg-slate-600 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition-all flex items-center gap-2">
                 <span>➕</span> Add Carrier
+              </button>
+              <button type="button" onclick="openAddTruckModal()" class="bg-gold-500 hover:bg-gold-600 text-slate-900 font-semibold py-2.5 px-4 rounded-xl text-sm transition-all flex items-center gap-2">
+                <span>➕</span> Add Truck
               </button>
             </div>
           </div>
           <div class="p-6">
-            <div>
-              <h3 class="text-lg font-bold text-slate-900 mb-4">Carriers (<span id="carrier-count">0</span>)</h3>
-              <div class="space-y-2" id="carriers-list"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 class="text-lg font-bold text-slate-900 mb-4">Carriers (<span id="carrier-count">0</span>)</h3>
+                <div class="space-y-2" id="carriers-list"></div>
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-slate-900 mb-4">Trucks (<span id="truck-count">0</span>)</h3>
+                <div class="space-y-2" id="trucks-list"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -840,54 +726,6 @@
                 </div>
               </div>
             </div>
-            
-            <!-- Help & Training Section (Admin) -->
-            <div class="pt-6 border-t">
-              <h3 class="text-lg font-bold text-slate-900 mb-4">📚 Help & Training</h3>
-              <div class="grid md:grid-cols-2 gap-4">
-                <a href="training.html" class="bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 rounded-xl p-4 transition-all block">
-                  <div class="flex items-center gap-3">
-                    <span class="text-2xl">👑</span>
-                    <div>
-                      <p class="font-semibold text-slate-900">Admin Training Guide</p>
-                      <p class="text-xs text-slate-500">QuickBooks, reports, customer setup</p>
-                    </div>
-                  </div>
-                </a>
-                <a href="operator-guide.html" class="bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-200 rounded-xl p-4 transition-all block">
-                  <div class="flex items-center gap-3">
-                    <span class="text-2xl">👷</span>
-                    <div>
-                      <p class="font-semibold text-slate-900">Operator Guide</p>
-                      <p class="text-xs text-slate-500">How to create tickets</p>
-                    </div>
-                  </div>
-                </a>
-                <a href="quick-reference.html" class="bg-purple-50 hover:bg-purple-100 border-2 border-purple-200 rounded-xl p-4 transition-all block">
-                  <div class="flex items-center gap-3">
-                    <span class="text-2xl">🖨️</span>
-                    <div>
-                      <p class="font-semibold text-slate-900">Print Quick Reference</p>
-                      <p class="text-xs text-slate-500">Cheat sheet for scale house</p>
-                    </div>
-                  </div>
-                </a>
-                <a href="test-dashboard.html" class="bg-amber-50 hover:bg-amber-100 border-2 border-amber-200 rounded-xl p-4 transition-all block">
-                  <div class="flex items-center gap-3">
-                    <span class="text-2xl">🧪</span>
-                    <div>
-                      <p class="font-semibold text-slate-900">System Diagnostics</p>
-                      <p class="text-xs text-slate-500">Test all connections</p>
-                    </div>
-                  </div>
-                </a>
-              </div>
-              <div class="mt-4 bg-slate-100 rounded-xl p-4">
-                <p class="text-sm text-slate-600">
-                  <strong>Need support?</strong> Email <a href="mailto:support@resultantai.com" class="text-gold-600 hover:underline">support@resultantai.com</a> or call 240-389-4152
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -911,54 +749,6 @@
                 <span>💼</span> QuickBooks <span id="selected-count" class="text-blue-200"></span>
               </button>
             </div>
-          </div>
-        </div>
-
-        <!-- Automated Export Panel (Admin & Finance) -->
-        <div id="auto-export-panel" class="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl p-6 text-white shadow-lg hidden">
-          <div class="flex items-center justify-between flex-wrap gap-4">
-            <div class="flex items-center gap-4">
-              <div class="bg-white/20 rounded-xl p-3">
-                <span class="text-3xl">📤</span>
-              </div>
-              <div>
-                <h3 class="text-xl font-bold">QuickBooks Export</h3>
-                <p class="text-blue-200 text-sm mt-1">
-                  <span id="pending-export-count" class="font-bold text-white text-lg">--</span> closed tickets ready to export
-                </p>
-              </div>
-            </div>
-            <div class="flex items-center gap-3 flex-wrap">
-              <button type="button" onclick="refreshPendingCount()" class="bg-white/20 hover:bg-white/30 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition-all flex items-center gap-2">
-                <span>🔄</span> Refresh
-              </button>
-              <button type="button" id="export-now-btn" onclick="triggerManualExport()" disabled class="bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-bold py-3 px-6 rounded-xl transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg">
-                <span>⚡</span> Export to QuickBooks Now
-              </button>
-            </div>
-          </div>
-          
-          <!-- Export Progress (hidden by default) -->
-          <div id="export-progress" class="hidden mt-4 bg-white/10 rounded-xl p-4">
-            <div class="flex items-center gap-3">
-              <div class="spinner"></div>
-              <div>
-                <p class="font-semibold" id="export-progress-text">Generating export...</p>
-                <p class="text-blue-200 text-sm" id="export-progress-detail">This may take a moment</p>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Export Info -->
-          <div class="mt-4 pt-4 border-t border-white/20">
-            <p class="text-blue-200 text-sm flex items-center gap-2">
-              <span>📧</span>
-              Exports are emailed to <strong class="text-white">accounting@beaverpumice.com</strong> (CC: lucas@beaverpumice.com)
-            </p>
-            <p class="text-blue-200 text-xs mt-2 flex items-center gap-2">
-              <span>💡</span>
-              Click "Export to QuickBooks Now" when you're ready to generate the IIF file. Tickets will be marked as exported.
-            </p>
           </div>
         </div>
 
@@ -1059,70 +849,6 @@
             <div class="text-center text-slate-500 py-8">
               <p class="text-4xl mb-2">📊</p>
               <p>Select filters and click "Apply Filters" to generate report</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ==================== PRICING VIEW (Admin Only) ==================== -->
-      <div id="view-pricing" class="view-content hidden p-4 md:p-6">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-          <div>
-            <h2 class="text-2xl font-bold text-gray-900">💰 Customer Pricing Overview</h2>
-            <p class="text-gray-600 mt-1">View customer rates, freight charges, and product assignments</p>
-          </div>
-          <div class="flex gap-2">
-            <button onclick="refreshPricingData()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium">
-              🔄 Refresh
-            </button>
-          </div>
-        </div>
-
-        <!-- Pricing Summary Cards -->
-        <div class="grid grid-cols-3 gap-4 mb-6" id="pricing-summary-cards">
-          <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-            <div class="text-sm text-gray-500">Customers with Pricing</div>
-            <div class="text-2xl font-bold text-gray-900" id="stat-customers-pricing">-</div>
-          </div>
-          <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-            <div class="text-sm text-gray-500">With Freight Rates</div>
-            <div class="text-2xl font-bold text-gray-900" id="stat-customers-freight">-</div>
-          </div>
-          <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
-            <div class="text-sm text-gray-500">Email Receipts On</div>
-            <div class="text-2xl font-bold text-gray-900" id="stat-customers-email">-</div>
-          </div>
-        </div>
-        <!-- Hidden stat for carriers (keeps JS from breaking) -->
-        <div id="stat-carriers-rates" class="hidden">0</div>
-
-        <!-- Customer Pricing Table -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <!-- Search Bar -->
-          <div class="p-4 border-b border-gray-100">
-            <input type="text" id="pricing-search" placeholder="Search customers..." 
-              class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gold-500 focus:border-gold-500"
-              oninput="filterPricingTable()">
-          </div>
-
-          <!-- Customer Pricing Tab -->
-          <div id="pricing-tab-customers" class="pricing-tab-content">
-            <div class="overflow-x-auto">
-              <table class="w-full text-sm">
-                <thead class="bg-gray-50">
-                  <tr>
-                    <th class="text-left px-4 py-3 font-semibold text-gray-700">Customer</th>
-                    <th class="text-right px-4 py-3 font-semibold text-gray-700">Pumice Rate</th>
-                    <th class="text-right px-4 py-3 font-semibold text-gray-700">Freight <span class="text-xs font-normal text-gray-500">(charge/cost)</span></th>
-                    <th class="text-center px-4 py-3 font-semibold text-gray-700">Products</th>
-                    <th class="text-center px-4 py-3 font-semibold text-gray-700">Email</th>
-                    <th class="text-center px-4 py-3 font-semibold text-gray-700">Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="customer-pricing-table" class="divide-y divide-gray-100">
-                  <tr><td colspan="6" class="px-4 py-8 text-center text-gray-500">Loading...</td></tr>
-                </tbody>
-              </table>
             </div>
           </div>
         </div>
@@ -1236,30 +962,25 @@
         <!-- Admin Status Controls -->
         <div id="admin-status-controls" class="hidden mb-4 pb-4 border-b border-slate-200">
           <p class="text-xs text-slate-500 uppercase tracking-wide font-semibold mb-2">Change Status</p>
-          <div id="status-buttons" class="flex gap-2 flex-wrap">
-            <button type="button" id="btn-status-open" onclick="changeTicketStatus('Open')" class="status-btn px-3 py-1.5 rounded-lg text-sm font-semibold border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50 transition-all">Open</button>
-            <button type="button" id="btn-status-hold" onclick="changeTicketStatus('Hold')" class="status-btn px-3 py-1.5 rounded-lg text-sm font-semibold border-2 border-amber-500 text-amber-600 hover:bg-amber-50 transition-all">Hold</button>
-            <button type="button" id="btn-status-closed" onclick="changeTicketStatus('Closed')" class="status-btn px-3 py-1.5 rounded-lg text-sm font-semibold border-2 border-blue-500 text-blue-600 hover:bg-blue-50 transition-all">Closed</button>
-            <button type="button" id="btn-status-void" onclick="changeTicketStatus('Void')" class="status-btn px-3 py-1.5 rounded-lg text-sm font-semibold border-2 border-red-500 text-red-600 hover:bg-red-50 transition-all">Void</button>
-            <button type="button" id="btn-status-unvoid" onclick="changeTicketStatus('Open')" class="status-btn hidden px-3 py-1.5 rounded-lg text-sm font-semibold border-2 border-green-500 text-green-600 hover:bg-green-50 transition-all">↩️ Unvoid</button>
+          <div class="flex gap-2 flex-wrap">
+            <button type="button" onclick="changeTicketStatus('Open')" class="status-btn px-3 py-1.5 rounded-lg text-sm font-semibold border-2 border-emerald-500 text-emerald-600 hover:bg-emerald-50 transition-all">Open</button>
+            <button type="button" onclick="changeTicketStatus('Hold')" class="status-btn px-3 py-1.5 rounded-lg text-sm font-semibold border-2 border-amber-500 text-amber-600 hover:bg-amber-50 transition-all">Hold</button>
+            <button type="button" onclick="changeTicketStatus('Closed')" class="status-btn px-3 py-1.5 rounded-lg text-sm font-semibold border-2 border-blue-500 text-blue-600 hover:bg-blue-50 transition-all">Closed</button>
+            <button type="button" onclick="changeTicketStatus('Void')" class="status-btn px-3 py-1.5 rounded-lg text-sm font-semibold border-2 border-red-500 text-red-600 hover:bg-red-50 transition-all">Void</button>
           </div>
-          <p id="status-locked-msg" class="hidden text-sm text-red-600 mt-2 font-medium">🔒 This ticket is locked and cannot be changed.</p>
         </div>
         
         <div class="flex items-center justify-between">
           <button type="button" onclick="closeModal('ticket-modal')" class="px-4 py-2 text-slate-600 hover:text-slate-900 font-medium transition-colors">← Back</button>
           <div class="flex items-center gap-2">
-            <button type="button" onclick="deleteTicketFromModal()" id="delete-ticket-btn" class="hidden bg-red-100 hover:bg-red-200 text-red-700 font-semibold py-3 px-4 rounded-xl transition-all flex items-center gap-2">
-              <span class="text-lg">🗑️</span>Delete
-            </button>
             <button type="button" onclick="editTicketFromModal()" id="edit-ticket-btn" class="hidden bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-3 px-4 rounded-xl transition-all flex items-center gap-2">
               <span class="text-lg">✏️</span>Edit
             </button>
-            <button type="button" onclick="emailTicketFromModal()" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-xl transition-all flex items-center gap-2">
-              <span class="text-xl">📧</span>Email
+            <button type="button" onclick="copyTicketToClipboard()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-3 px-4 rounded-xl transition-all flex items-center gap-2">
+              <span class="text-lg">📋</span>Copy
             </button>
             <button type="button" onclick="printTicketFromModal()" class="print-btn-main bg-gradient-to-r from-gold-600 to-gold-500 hover:from-gold-700 hover:to-gold-600 text-slate-900 font-bold py-3 px-6 rounded-xl transition-all flex items-center gap-2">
-              <span class="text-xl">📄</span>Print Ticket
+              <span class="text-xl">🖨️</span>Print
             </button>
           </div>
         </div>
@@ -1289,94 +1010,38 @@
             <input type="tel" name="phone" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
           </div>
         </div>
-        <!-- Bill To -->
-        <div class="border-t border-slate-200 pt-3 mt-2">
-          <h4 class="text-sm font-bold text-slate-800 mb-2">📬 Bill To</h4>
-          <input type="email" name="billToEmail" placeholder="billing@company.com (for invoices)" class="w-full px-3 py-2 border-2 border-slate-200 rounded-lg focus:border-gold-500 mb-2 text-sm">
-          <input type="text" name="billToAddress" placeholder="Street address" class="w-full px-3 py-2 border-2 border-slate-200 rounded-lg focus:border-gold-500 mb-2 text-sm">
-          <div class="grid grid-cols-3 gap-2">
-            <input type="text" name="billToCity" placeholder="City" class="w-full px-3 py-2 border-2 border-slate-200 rounded-lg focus:border-gold-500 text-sm">
-            <input type="text" name="billToState" maxlength="2" placeholder="ST" class="w-full px-3 py-2 border-2 border-slate-200 rounded-lg focus:border-gold-500 text-sm">
-            <input type="text" name="billToZip" placeholder="Zip" class="w-full px-3 py-2 border-2 border-slate-200 rounded-lg focus:border-gold-500 text-sm">
-          </div>
-        </div>
-        
-        <!-- Ship To Address -->
-        <div class="border-t border-slate-200 pt-3 mt-2">
-          <h4 class="text-sm font-bold text-slate-800 mb-2">🚚 Ship To Address</h4>
-          <input type="text" name="shipToAddress" placeholder="Street address (delivery)" class="w-full px-3 py-2 border-2 border-slate-200 rounded-lg focus:border-gold-500 mb-2 text-sm">
-          <div class="grid grid-cols-3 gap-2">
-            <input type="text" name="shipToCity" placeholder="City" class="w-full px-3 py-2 border-2 border-slate-200 rounded-lg focus:border-gold-500 text-sm">
-            <input type="text" name="shipToState" maxlength="2" placeholder="ST" class="w-full px-3 py-2 border-2 border-slate-200 rounded-lg focus:border-gold-500 text-sm">
-            <input type="text" name="shipToZip" placeholder="Zip" class="w-full px-3 py-2 border-2 border-slate-200 rounded-lg focus:border-gold-500 text-sm">
-          </div>
-        </div>
-        
-        <!-- Pricing Method (per yard or per ton) -->
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">Pricing Method <span class="text-red-500">*</span></label>
-          <select name="pricingMethod" required class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500 bg-white">
-            <option value="Per Yard" selected>Per Yard</option>
-            <option value="Per Ton">Per Ton</option>
-          </select>
-          <p class="text-xs text-slate-500 mt-1">How to bill this customer for pumice</p>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Address</label>
+          <input type="text" name="address1" placeholder="Street address" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
         </div>
-        
+        <div class="grid grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">City</label>
+            <input type="text" name="city" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">State</label>
+            <input type="text" name="state" maxlength="2" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">Zip</label>
+            <input type="text" name="zip" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
+          </div>
+        </div>
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-1">Price/Yard <span class="font-normal text-slate-400">($13 default)</span></label>
-            <input type="number" name="priceYard" step="0.01" placeholder="13.00" value="13" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
+            <label class="block text-sm font-semibold text-slate-700 mb-1">Price/Yard</label>
+            <input type="number" name="priceYard" step="0.01" placeholder="$0.00" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
           </div>
           <div>
             <label class="block text-sm font-semibold text-slate-700 mb-1">Price/Ton</label>
-            <input type="number" name="priceTon" step="0.01" placeholder="Optional" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
+            <input type="number" name="priceTon" step="0.01" placeholder="$0.00" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
           </div>
         </div>
-        
-        <!-- Freight Settings -->
-        <div class="border-t border-slate-200 pt-4 mt-2">
-          <h4 class="text-sm font-bold text-slate-800 mb-3">🚚 Freight Settings</h4>
-          <!-- Customer Charge (what you bill) -->
-          <div class="grid grid-cols-2 gap-3 mb-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Charge Method</label>
-              <select name="freightMethod" class="w-full px-3 py-2 border-2 border-slate-200 rounded-lg focus:border-blue-500 bg-white text-sm">
-                <option value="">None</option>
-                <option value="per_ton">Per Ton</option>
-                <option value="per_yard">Per Yard</option>
-                <option value="flat">Flat Fee</option>
-                <option value="delivered">Delivered</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Charge Rate</label>
-              <div class="relative">
-                <span class="absolute left-2 top-2 text-slate-500 text-sm">$</span>
-                <input type="number" name="freightRate" step="0.01" min="0" placeholder="0.00" class="w-full pl-6 pr-2 py-2 border-2 border-slate-200 rounded-lg focus:border-blue-500 bg-white text-sm">
-              </div>
-            </div>
-          </div>
-          <!-- Truck Cost (what you pay) -->
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Cost Method <span class="text-xs text-slate-400">(truck)</span></label>
-              <select name="freightCostMethod" class="w-full px-3 py-2 border-2 border-slate-200 rounded-lg focus:border-blue-500 bg-white text-sm">
-                <option value="">Same as Charge</option>
-                <option value="per_ton">Per Ton</option>
-                <option value="per_yard">Per Yard</option>
-                <option value="flat">Flat Fee</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Cost Rate <span class="text-xs text-slate-400">(pay truck)</span></label>
-              <div class="relative">
-                <span class="absolute left-2 top-2 text-slate-500 text-sm">$</span>
-                <input type="number" name="freightCost" step="0.01" min="0" placeholder="0.00" class="w-full pl-6 pr-2 py-2 border-2 border-slate-200 rounded-lg focus:border-blue-500 bg-white text-sm">
-              </div>
-            </div>
-          </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Default Ticket Notes <span class="text-slate-400 font-normal">(will appear on all tickets for this customer)</span></label>
+          <textarea name="notes" rows="3" placeholder="e.g., Granite product - special handling required" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500"></textarea>
         </div>
-        
         <div class="pt-4 flex gap-3">
           <button type="button" onclick="closeModal('add-customer-modal')" class="flex-1 px-4 py-3 border-2 border-slate-200 text-slate-600 font-semibold rounded-xl hover:bg-slate-50 transition-all">Cancel</button>
           <button type="submit" id="add-customer-btn" class="flex-1 px-4 py-3 bg-gold-500 hover:bg-gold-600 text-slate-900 font-semibold rounded-xl transition-all flex items-center justify-center gap-2">
@@ -1411,138 +1076,38 @@
             <input type="tel" name="phone" id="edit-customer-phone" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
           </div>
         </div>
-        <!-- Bill To Address -->
-        <div class="border-t-2 border-slate-100 pt-4 mt-2">
-          <h4 class="text-sm font-bold text-slate-800 mb-2">📬 Bill To</h4>
-          <div class="space-y-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Bill To Email <span class="text-slate-400">(for invoices)</span></label>
-              <input type="email" name="billToEmail" id="edit-customer-billToEmail" placeholder="billing@company.com" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
-            </div>
-            <input type="text" name="billToAddress" id="edit-customer-billToAddress" placeholder="Street address" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
-            <div class="grid grid-cols-3 gap-3">
-              <input type="text" name="billToCity" id="edit-customer-billToCity" placeholder="City" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
-              <input type="text" name="billToState" id="edit-customer-billToState" maxlength="2" placeholder="State" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
-              <input type="text" name="billToZip" id="edit-customer-billToZip" placeholder="Zip" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
-            </div>
-          </div>
-        </div>
-        
-        <!-- Ship To Address -->
-        <div class="border-t-2 border-slate-100 pt-4 mt-2">
-          <h4 class="text-sm font-bold text-slate-800 mb-2">🚚 Ship To Address <span class="font-normal text-slate-500">(delivery destination)</span></h4>
-          <div class="space-y-3">
-            <input type="text" name="shipToAddress" id="edit-customer-shipToAddress" placeholder="Street address" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
-            <div class="grid grid-cols-3 gap-3">
-              <input type="text" name="shipToCity" id="edit-customer-shipToCity" placeholder="City" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
-              <input type="text" name="shipToState" id="edit-customer-shipToState" maxlength="2" placeholder="State" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
-              <input type="text" name="shipToZip" id="edit-customer-shipToZip" placeholder="Zip" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
-            </div>
-          </div>
-        </div>
-        
-        <!-- Pricing Method (per yard or per ton) -->
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">Pricing Method</label>
-          <select name="pricingMethod" id="edit-customer-pricingMethod" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500 bg-white">
-            <option value="">Not Set</option>
-            <option value="Per Yard">Per Yard</option>
-            <option value="Per Ton">Per Ton</option>
-          </select>
-          <p class="text-xs text-slate-500 mt-1">How to bill this customer for pumice</p>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Address</label>
+          <input type="text" name="address1" id="edit-customer-address" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
         </div>
-        
+        <div class="grid grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">City</label>
+            <input type="text" name="city" id="edit-customer-city" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">State</label>
+            <input type="text" name="state" id="edit-customer-state" maxlength="2" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-700 mb-1">Zip</label>
+            <input type="text" name="zip" id="edit-customer-zip" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
+          </div>
+        </div>
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-1">Price/Yard <span class="font-normal text-slate-400">($13 default)</span></label>
-            <input type="number" name="priceYard" id="edit-customer-priceYard" step="0.01" placeholder="13.00" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
+            <label class="block text-sm font-semibold text-slate-700 mb-1">Price/Yard</label>
+            <input type="number" name="priceYard" id="edit-customer-priceYard" step="0.01" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
           </div>
           <div>
             <label class="block text-sm font-semibold text-slate-700 mb-1">Price/Ton</label>
             <input type="number" name="priceTon" id="edit-customer-priceTon" step="0.01" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
           </div>
         </div>
-        
         <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">Billing Notes <span class="font-normal text-slate-500">(special instructions for invoicing)</span></label>
-          <textarea name="billingNotes" id="edit-customer-billingNotes" rows="2" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500" placeholder="e.g., Bill weekly, requires PO number, special discount applies..."></textarea>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Default Ticket Notes <span class="text-slate-400 font-normal">(will appear on all tickets for this customer)</span></label>
+          <textarea name="notes" id="edit-customer-notes" rows="3" placeholder="e.g., Granite product - special handling required" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500"></textarea>
         </div>
-        
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">Default Note <span class="font-normal text-slate-500">(appears on all tickets for this customer)</span></label>
-          <textarea name="defaultNote" id="edit-customer-defaultNote" rows="2" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500" placeholder="e.g., Load to 80,000 lbs max"></textarea>
-        </div>
-        
-        <!-- Freight Settings Section -->
-        <div class="border-t-2 border-slate-100 pt-4 mt-2">
-          <h4 class="text-sm font-bold text-slate-800 mb-2">🚚 Freight Settings <span class="font-normal text-slate-500">(when BP arranges trucking)</span></h4>
-          <!-- Customer Charge Row -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Charge Method <span class="text-slate-400">(bill customer)</span></label>
-              <select name="freightMethod" id="edit-customer-freightMethod" class="w-full px-3 py-2 border-2 border-slate-200 rounded-lg focus:border-blue-500 bg-white text-sm">
-                <option value="">None (Customer Pickup)</option>
-                <option value="per_ton">Per Ton</option>
-                <option value="per_yard">Per Yard</option>
-                <option value="flat">Flat Fee (per load)</option>
-                <option value="delivered">Delivered (all-in price)</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Charge Rate <span class="text-slate-400">($/unit)</span></label>
-              <div class="relative">
-                <span class="absolute left-3 top-2 text-slate-500 text-sm">$</span>
-                <input type="number" name="freightRate" id="edit-customer-freightRate" step="0.01" min="0" placeholder="0.00" class="w-full pl-7 pr-3 py-2 border-2 border-slate-200 rounded-lg focus:border-blue-500 bg-white text-sm">
-              </div>
-            </div>
-          </div>
-          <!-- Truck Cost Row -->
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Cost Method <span class="text-slate-400">(pay truck)</span></label>
-              <select name="freightCostMethod" id="edit-customer-freightCostMethod" class="w-full px-3 py-2 border-2 border-slate-200 rounded-lg focus:border-blue-500 bg-white text-sm">
-                <option value="">Same as Charge Method</option>
-                <option value="per_ton">Per Ton</option>
-                <option value="per_yard">Per Yard</option>
-                <option value="flat">Flat Fee (per load)</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Cost Rate <span class="text-slate-400">($/unit)</span></label>
-              <div class="relative">
-                <span class="absolute left-3 top-2 text-slate-500 text-sm">$</span>
-                <input type="number" name="freightCost" id="edit-customer-freightCost" step="0.01" min="0" placeholder="0.00" class="w-full pl-7 pr-3 py-2 border-2 border-slate-200 rounded-lg focus:border-blue-500 bg-white text-sm">
-              </div>
-            </div>
-          </div>
-          <p class="text-xs text-slate-500 mt-2">💡 Freight auto-calculates on tickets. Use different methods to charge customer by yard but pay truck by ton.</p>
-        </div>
-        
-        <!-- Allowed Products Section -->
-        <div class="border-t-2 border-slate-100 pt-4 mt-2">
-          <h4 class="text-sm font-bold text-slate-800 mb-2">📦 Allowed Products</h4>
-          <p class="text-xs text-slate-500 mb-3">Only checked products will appear when creating tickets for this customer. Leave all unchecked to allow all products.</p>
-          <div id="allowed-products-checkboxes" class="grid grid-cols-2 gap-2">
-            <!-- Populated dynamically -->
-          </div>
-        </div>
-        
-        <!-- Email Settings Section -->
-        <div class="border-t-2 border-slate-100 pt-4 mt-2">
-          <h4 class="text-sm font-bold text-slate-800 mb-2">📧 Email Settings</h4>
-          <div class="flex items-center justify-between bg-slate-50 rounded-xl p-4">
-            <div>
-              <div class="font-medium text-slate-900">Auto-Email Ticket Receipts</div>
-              <div class="text-xs text-slate-500">Automatically email this customer when tickets are created</div>
-            </div>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" name="emailReceipts" id="edit-customer-emailReceipts" class="sr-only peer">
-              <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-gold-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
-            </label>
-          </div>
-          <p class="text-xs text-slate-500 mt-2">💡 Requires an email address above. Tickets will be emailed to the main Email or Bill To Email.</p>
-        </div>
-        
         <div class="pt-4 flex gap-3">
           <button type="button" onclick="confirmDeleteCustomer()" class="px-4 py-3 border-2 border-red-200 text-red-600 font-semibold rounded-xl hover:bg-red-50 transition-all flex items-center justify-center gap-1">
             <span>🗑️</span> Delete
@@ -1780,7 +1345,6 @@
           <label class="block text-sm font-semibold text-slate-700 mb-1">Role <span class="text-red-500">*</span></label>
           <select name="userRole" required class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
             <option value="user">👷 Operator</option>
-            <option value="finance">💰 Finance</option>
             <option value="admin">👑 Admin</option>
           </select>
         </div>
@@ -1813,7 +1377,6 @@
           <label class="block text-sm font-semibold text-slate-700 mb-1">Role <span class="text-red-500">*</span></label>
           <select id="edit-user-role" required class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
             <option value="user">👷 Operator</option>
-            <option value="finance">💰 Finance</option>
             <option value="admin">👑 Admin</option>
           </select>
         </div>
@@ -1832,7 +1395,7 @@
 
   <!-- Edit Product Modal -->
   <div id="edit-product-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full">
       <div class="bg-gradient-to-r from-slate-900 to-slate-800 px-6 py-5 flex items-center justify-between">
         <h2 class="text-xl font-bold text-white">📦 Edit Product</h2>
         <button type="button" onclick="closeModal('edit-product-modal')" class="text-slate-400 hover:text-white transition-colors p-2">✕</button>
@@ -1846,28 +1409,7 @@
         <div>
           <label class="block text-sm font-semibold text-slate-700 mb-1">Lbs per Yard <span class="text-red-500">*</span></label>
           <input type="number" name="productWeight" required min="1" step="1" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
-          <p class="text-xs text-slate-500 mt-1">Weight in pounds per cubic yard (for yard calculations)</p>
-        </div>
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-1">Default $/Yard</label>
-            <div class="relative">
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">$</span>
-              <input type="number" name="productPriceYard" min="0" step="0.01" class="w-full pl-7 pr-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
-            </div>
-          </div>
-          <div>
-            <label class="block text-sm font-semibold text-slate-700 mb-1">Default $/Ton</label>
-            <div class="relative">
-              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500">$</span>
-              <input type="number" name="productPriceTon" min="0" step="0.01" class="w-full pl-7 pr-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
-            </div>
-          </div>
-        </div>
-        <div>
-          <label class="block text-sm font-semibold text-slate-700 mb-1">QuickBooks Item Code</label>
-          <input type="text" name="productQBCode" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500" placeholder="e.g., PUMICE-38MIN">
-          <p class="text-xs text-slate-500 mt-1">Used in QuickBooks exports</p>
+          <p class="text-xs text-slate-500 mt-1">Weight in pounds per cubic yard</p>
         </div>
         <div id="product-airtable-warning" class="hidden bg-amber-50 border border-amber-200 rounded-lg p-3">
           <p class="text-sm text-amber-800">⚠️ This product is not linked to Airtable. Changes will only be saved locally.</p>
@@ -1955,37 +1497,6 @@
           </div>
         </div>
 
-        <!-- Freight Section (Edit Modal) -->
-        <div class="mt-4 p-4 bg-blue-50 border-2 border-blue-200 rounded-xl">
-          <div class="flex items-center gap-2 mb-3">
-            <span class="text-blue-600 text-lg">🚚</span>
-            <h4 class="font-semibold text-blue-800">Freight</h4>
-          </div>
-          <div class="grid grid-cols-3 gap-4">
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Cost (pay carrier)</label>
-              <div class="relative">
-                <span class="absolute left-3 top-2.5 text-slate-500 text-sm">$</span>
-                <input type="number" id="edit-ticket-freight-cost" placeholder="0.00" step="0.01" min="0" class="w-full pl-7 pr-3 py-2 border-2 border-slate-200 rounded-lg focus:border-blue-500 bg-white text-sm" oninput="calculateEditFreightMargin()">
-              </div>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Charge (bill customer)</label>
-              <div class="relative">
-                <span class="absolute left-3 top-2.5 text-slate-500 text-sm">$</span>
-                <input type="number" id="edit-ticket-freight-charge" placeholder="0.00" step="0.01" min="0" class="w-full pl-7 pr-3 py-2 border-2 border-slate-200 rounded-lg focus:border-blue-500 bg-white text-sm" oninput="calculateEditFreightMargin()">
-              </div>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Margin (profit)</label>
-              <div class="relative">
-                <span class="absolute left-3 top-2.5 text-slate-500 text-sm">$</span>
-                <input type="text" id="edit-ticket-freight-margin" readonly class="w-full pl-7 pr-3 py-2 border-2 border-green-200 rounded-lg bg-green-50 text-green-700 font-semibold text-sm">
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div class="pt-4 flex gap-3">
           <button type="button" onclick="closeModal('edit-ticket-modal')" class="flex-1 px-4 py-3 border-2 border-slate-200 text-slate-600 font-semibold rounded-xl hover:bg-slate-50 transition-all">Cancel</button>
           <button type="submit" class="flex-1 px-4 py-3 bg-gold-500 hover:bg-gold-600 text-slate-900 font-bold rounded-xl transition-all">💾 Save Changes</button>
@@ -2060,7 +1571,6 @@
     </div>
   </div>
 
-
   <div id="toast-container"></div>
 
   <script>
@@ -2083,17 +1593,26 @@
     // Customers loaded from Airtable
     let CUSTOMERS = [];
 
-    let CARRIERS = [];
+    let CARRIERS = [
+      { id: 1, name: 'JF Rodriguez Trucking', phone: '541-555-0201', email: '' },
+      { id: 2, name: 'ABC Transport', phone: '541-555-0202', email: '' },
+      { id: 3, name: 'High Desert Hauling', phone: '541-555-0203', email: '' },
+    ];
 
-    let TRUCKS = [];
+    let TRUCKS = [
+      { id: 1, truckId: '7 JF Rodriguez', carrier: 'JF Rodriguez Trucking' },
+      { id: 2, truckId: '12 Mike S', carrier: 'ABC Transport' },
+      { id: 3, truckId: '15 Carlos M', carrier: 'High Desert Hauling' },
+    ];
 
-    let tickets = [];
+    let tickets = [
+      { id: 1, airtableId: 'recmY44myYCSos8M5', number: 4742, customer: '', carrier: 'JF Rodriguez Trucking', truck: '', product: '1 x 3/8', gross: 79960, tare: 32540, po: '', note: '', date: '12/5/2025 5:24 PM', printUrl: 'https://beaver-pumice-ticket-viewer.netlify.app/?id=recmY44myYCSos8M5' },
+      { id: 2, airtableId: 'recgJJRO8d8eziDqx', number: 4743, customer: 'Willamette Landscaping', carrier: 'JF Rodriguez Trucking', truck: '7 JF Rodriguez', product: '1 x 3/8', gross: 79960, tare: 32540, po: '', note: '', date: '12/5/2025 7:30 PM', printUrl: 'https://beaver-pumice-ticket-viewer.netlify.app/?id=recgJJRO8d8eziDqx' },
+    ];
 
     let USERS = [
       { id: 'admin', name: 'Lucas', role: 'admin', pin: '1234', icon: '👑', label: 'Administrator' },
-      { id: 'admin2', name: 'Brent', role: 'admin', pin: '5678', icon: '👑', label: 'Administrator' },
-      { id: 'finance', name: 'Jesse', role: 'admin', pin: '1357', icon: '💰', label: 'Finance/Admin' },
-      { id: 'user', name: 'Doug', role: 'user', pin: '0000', icon: '👷', label: 'Operator' }
+      { id: 'user', name: 'Operator', role: 'user', pin: '0000', icon: '👷', label: 'Operator' }
     ];
 
     let currentUser = null;
@@ -2182,10 +1701,6 @@
         
         const data = await response.json();
         if (data.success && data.customer) {
-          // Attach warning if present
-          if (data.warning) {
-            data.customer._warning = data.warning;
-          }
           return data.customer;
         }
         throw new Error('Invalid response');
@@ -2258,10 +1773,7 @@
             id: `prod_${index + 1}`,
             airtableId: p.id,
             name: p.name,
-            lbsPerYard: p.lbsPerYard,
-            priceYard: p.priceYard,
-            priceTon: p.priceTon,
-            qbCode: p.qbCode || ''
+            lbsPerYard: p.lbsPerYard
           }));
           console.log(`Loaded ${PRODUCTS.length} products from Airtable`);
           
@@ -2298,10 +1810,7 @@
           body: JSON.stringify({
             id: product.airtableId,
             name: product.name,
-            lbsPerYard: product.lbsPerYard,
-            priceYard: product.priceYard,
-            priceTon: product.priceTon,
-            qbCode: product.qbCode
+            lbsPerYard: product.lbsPerYard
           })
         });
         
@@ -2391,10 +1900,6 @@
       
       currentUser = { ...user };
       
-      // Set role class on body for CSS visibility rules
-      document.body.classList.remove('role-admin', 'role-finance', 'role-operator');
-      document.body.classList.add(`role-${user.role}`);
-      
       const loginKey = `bp_login_count_${userType}`;
       const loginCount = parseInt(localStorage.getItem(loginKey) || '0') + 1;
       localStorage.setItem(loginKey, loginCount.toString());
@@ -2417,7 +1922,6 @@
 
     function logout() {
       currentUser = null;
-      document.body.classList.remove('role-admin', 'role-finance', 'role-operator');
       document.getElementById('main-app').classList.add('hidden');
       document.getElementById('login-screen').classList.remove('hidden');
       document.getElementById('login-screen').classList.add('flex');
@@ -2436,16 +1940,13 @@
         { icon: '👋', title: 'Welcome, Admin!', text: 'This is your Dashboard where you can see all quarry stats at a glance. You have full access to manage customers, trucks, pricing, and settings.' },
         { icon: '➕', title: 'Create Tickets', text: 'Click "New Ticket" to create a new load ticket. You\'ll enter customer, truck, product, and weight info.' },
         { icon: '👥', title: 'Manage Customers', text: 'View customers as cards or list, add new customers, upload CSV files, and edit existing customer information.' },
-        { icon: '📊', title: 'Reports & QuickBooks', text: 'Use Reports to export data, generate PDFs, and create QuickBooks IIF files for billing.' },
-        { icon: '📚', title: 'Training & Help', text: 'Find training guides in Settings → Help & Training. There\'s an Admin Guide, Operator Guide, and printable cheat sheet for the scale house.' },
-        { icon: '❓', title: 'Need Help?', text: 'Click the ? button (bottom-right) anytime for quick access to guides and support. You can also email support@resultantai.com.' }
+        { icon: '⚙️', title: 'Admin Controls', text: 'In Settings, you can manage products, add users, and configure the system.' }
       ],
       user: [
         { icon: '👋', title: 'Welcome, Operator!', text: 'Your main job is creating and printing tickets. Let\'s show you how it works!' },
         { icon: '➕', title: 'Create New Ticket', text: 'Tap the big gold button to start a new load entry whenever a truck arrives.' },
         { icon: '🖨️', title: 'Print Tickets', text: 'After creating a ticket, click the Print button to get a physical copy.' },
-        { icon: '📚', title: 'Training & Help', text: 'Scroll down on your home screen to find Help & Training with step-by-step guides. You can also print a cheat sheet to post at the scale!' },
-        { icon: '❓', title: 'Need Help?', text: 'Click the ? button (bottom-right corner) anytime. If something\'s not working, call the office or email support@resultantai.com.' }
+        { icon: '✅', title: 'You\'re Ready!', text: 'That\'s it! Fill in the form, click Create, then Print. Ask Lucas if you need help.' }
       ]
     };
 
@@ -2559,10 +2060,9 @@
       document.getElementById('user-icon').textContent = currentUser.icon;
       
       const badge = document.getElementById('user-badge');
-      const roleClass = currentUser.role === 'admin' ? 'badge-role-admin' 
-        : currentUser.role === 'finance' ? 'badge-role-finance' 
-        : 'badge-role-user';
-      badge.className = roleClass + ' w-10 h-10 rounded-full flex items-center justify-center';
+      badge.className = currentUser.role === 'admin' 
+        ? 'role-admin w-10 h-10 rounded-full flex items-center justify-center' 
+        : 'role-user w-10 h-10 rounded-full flex items-center justify-center';
       
       setupNavigation();
       
@@ -2584,13 +2084,7 @@
     }
 
     function goHome() {
-      if (currentUser?.role === 'admin') {
-        showView('dashboard');
-      } else if (currentUser?.role === 'finance') {
-        showView('tickets');
-      } else {
-        showView('operator-home');
-      }
+      showView(currentUser?.role === 'admin' ? 'dashboard' : 'operator-home');
     }
 
     function setupNavigation() {
@@ -2611,33 +2105,14 @@
             <span class="mr-1">👥</span><span class="hidden sm:inline">Customers</span>
           </button>
           <button type="button" onclick="showView('trucks')" id="nav-trucks" class="nav-btn px-5 py-4 text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white rounded-t-lg whitespace-nowrap">
-            <span class="mr-1">🚛</span><span class="hidden sm:inline">Carriers</span>
+            <span class="mr-1">🚛</span><span class="hidden sm:inline">Trucks</span>
           </button>
           <button type="button" onclick="showView('reports')" id="nav-reports" class="nav-btn px-5 py-4 text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white rounded-t-lg whitespace-nowrap">
             <span class="mr-1">📈</span><span class="hidden sm:inline">Reports</span>
           </button>
-          <button type="button" onclick="showView('pricing')" id="nav-pricing" class="nav-btn px-5 py-4 text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white rounded-t-lg whitespace-nowrap">
-            <span class="mr-1">💰</span><span class="hidden sm:inline">Pricing</span>
-          </button>
           <button type="button" onclick="showView('settings')" id="nav-settings" class="nav-btn px-5 py-4 text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white rounded-t-lg whitespace-nowrap">
             <span class="mr-1">⚙️</span><span class="hidden sm:inline">Settings</span>
           </button>
-          <a href="/incidents-dashboard.html" class="nav-btn px-5 py-4 text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white rounded-t-lg whitespace-nowrap flex items-center">
-            <span class="mr-1">🩺</span><span class="hidden sm:inline">System Health</span>
-          </a>
-        `;
-      } else if (currentUser.role === 'finance') {
-        // Finance role: Tickets (Hold→Closed) + Reports (QB Export)
-        nav.innerHTML = `
-          <button type="button" onclick="showView('tickets')" id="nav-tickets" class="nav-btn px-5 py-4 text-sm font-semibold bg-gold-500 text-slate-900 rounded-t-lg whitespace-nowrap">
-            <span class="mr-1">📋</span><span class="hidden sm:inline">Tickets</span>
-          </button>
-          <button type="button" onclick="showView('reports')" id="nav-reports" class="nav-btn px-5 py-4 text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white rounded-t-lg whitespace-nowrap">
-            <span class="mr-1">📈</span><span class="hidden sm:inline">Reports & Export</span>
-          </button>
-          <a href="/incidents-dashboard.html" class="nav-btn px-5 py-4 text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white rounded-t-lg whitespace-nowrap flex items-center">
-            <span class="mr-1">🩺</span><span class="hidden sm:inline">System Health</span>
-          </a>
         `;
       } else {
         nav.innerHTML = `
@@ -2654,7 +2129,7 @@
             <span class="mr-1">👥</span><span class="hidden sm:inline">Customers</span>
           </button>
           <button type="button" onclick="showView('trucks')" id="nav-trucks" class="nav-btn px-5 py-4 text-sm font-semibold text-slate-400 hover:bg-slate-800 hover:text-white rounded-t-lg whitespace-nowrap">
-            <span class="mr-1">🚛</span><span class="hidden sm:inline">Carriers</span>
+            <span class="mr-1">🚛</span><span class="hidden sm:inline">Trucks</span>
           </button>
         `;
       }
@@ -2680,13 +2155,6 @@
       if (viewId === 'trucks') renderTrucksAndCarriers();
       if (viewId === 'settings') renderSettings();
       if (viewId === 'reports') initReportsView();
-      if (viewId === 'pricing') {
-        // Ensure main data arrays are loaded for edit modals
-        if (CUSTOMERS.length === 0) loadCustomersFromAirtable();
-        if (CARRIERS.length === 0) loadCarriersFromAirtable();
-        if (PRODUCTS.length === 0) loadProductsFromAirtable();
-        initPricingView();
-      }
     }
 
     // ==================== CALCULATIONS ====================
@@ -2700,34 +2168,6 @@
     function calcYards(gross, tare, product) { 
       const yards = (gross - tare) / getProductWeight(product);
       return isFinite(yards) ? yards.toFixed(2) : '0.00';
-    }
-    
-    // v69: Calculate $ amount based on customer pricing method (per ton vs per yard)
-    function calcAmount(ticket, customer) {
-      if (!customer) {
-        customer = CUSTOMERS.find(c => c.id === ticket.customerId || c.name === ticket.customer);
-      }
-      
-      const tons = parseFloat(calcTons(ticket.gross, ticket.tare)) || 0;
-      const yards = parseFloat(calcYards(ticket.gross, ticket.tare, ticket.product)) || 0;
-      
-      // Determine billing method from customer settings
-      const method = (customer?.pricingMethod || '').toLowerCase();
-      const billByTon = method.includes('ton') || (customer?.priceTon && !customer?.priceYard);
-      
-      let amount;
-      if (billByTon && customer?.priceTon) {
-        // Bill by tons at customer's ton rate
-        amount = tons * customer.priceTon;
-      } else if (customer?.priceYard) {
-        // Bill by yards at customer's yard rate
-        amount = yards * customer.priceYard;
-      } else {
-        // Default: yards at $13
-        amount = yards * 13;
-      }
-      
-      return Math.round(amount * 100) / 100; // Round to 2 decimals
     }
 
     function updateStats() {
@@ -2749,14 +2189,9 @@
       const customerSelect = document.getElementById('ticket-customer');
       customerSelect.innerHTML = '<option value="">Select customer...</option>';
       CUSTOMERS.sort((a, b) => a.name.localeCompare(b.name)).forEach(c => {
-        // Store allowed products as JSON in data attribute
-        const allowedProducts = JSON.stringify(c.allowedProducts || []);
-        customerSelect.innerHTML += `<option value="${c.name}" data-airtableid="${c.airtableId || c.id}" data-allowed-products='${allowedProducts}'>${c.name}</option>`;
+        const notes = (c.notes || '').replace(/"/g, '&quot;');
+        customerSelect.innerHTML += `<option value="${c.name}" data-airtableid="${c.airtableId || c.id}" data-notes="${notes}">${c.name}</option>`;
       });
-      
-      // Add customer change listener for product filtering
-      customerSelect.removeEventListener('change', handleCustomerChange);
-      customerSelect.addEventListener('change', handleCustomerChange);
 
       const carrierSelect = document.getElementById('ticket-carrier');
       carrierSelect.innerHTML = '<option value="">Select carrier...</option>';
@@ -2764,211 +2199,18 @@
         carrierSelect.innerHTML += `<option value="${c.name}" data-airtableid="${c.airtableId || c.id}">${c.name}</option>`;
       });
 
-      // Truck is now a text field, no dropdown needed
+      const truckSelect = document.getElementById('ticket-truck');
+      truckSelect.innerHTML = '<option value="">Select truck...</option>';
+      TRUCKS.forEach(t => {
+        const displayName = t.carrier ? `${t.truckId} (${t.carrier})` : t.truckId;
+        truckSelect.innerHTML += `<option value="${t.truckId}" data-airtableid="${t.airtableId || t.id}">${displayName}</option>`;
+      });
 
-      // Populate all products initially
-      populateProductDropdown();
-    }
-    
-    // Populate product dropdown (optionally filtered by allowed product IDs)
-    function populateProductDropdown(allowedProductIds = null) {
       const productSelect = document.getElementById('ticket-product');
-      const filterNotice = document.getElementById('product-filter-notice');
-      const previousValue = productSelect.value;
-      
       productSelect.innerHTML = '<option value="">Select product...</option>';
-      
-      let productsToShow = PRODUCTS;
-      let isFiltered = false;
-      
-      // Filter products if customer has restrictions
-      if (allowedProductIds && allowedProductIds.length > 0) {
-        productsToShow = PRODUCTS.filter(p => 
-          allowedProductIds.includes(p.airtableId) || allowedProductIds.includes(p.id)
-        );
-        isFiltered = true;
-        
-        // If only one product allowed, show a friendly message
-        if (productsToShow.length === 1) {
-          console.log(`Customer restricted to single product: ${productsToShow[0].name}`);
-        }
-      }
-      
-      // Show/hide filter notice
-      if (filterNotice) {
-        if (isFiltered && productsToShow.length < PRODUCTS.length) {
-          filterNotice.classList.remove('hidden');
-          filterNotice.innerHTML = `<span class="inline-flex items-center gap-1">✓ Showing ${productsToShow.length} of ${PRODUCTS.length} products for this customer</span>`;
-        } else {
-          filterNotice.classList.add('hidden');
-        }
-      }
-      
-      productsToShow.forEach(p => {
+      PRODUCTS.forEach(p => {
         productSelect.innerHTML += `<option value="${p.name}" data-airtableid="${p.airtableId || p.id}" data-lbs="${p.lbsPerYard}">${p.name}</option>`;
       });
-      
-      // Auto-select if only one product is available
-      if (productsToShow.length === 1) {
-        productSelect.value = productsToShow[0].name;
-        productSelect.dispatchEvent(new Event('change')); // Trigger calculations
-        showToast(`Auto-selected: ${productsToShow[0].name}`, 'info');
-      } else if (previousValue && productsToShow.find(p => p.name === previousValue)) {
-        // Restore previous selection if still valid
-        productSelect.value = previousValue;
-      }
-      
-      return productsToShow.length;
-    }
-    
-    // Handle customer selection change - filter products
-    function handleCustomerChange(e) {
-      const selectedOption = e.target.selectedOptions[0];
-      const defaultNoteContainer = document.getElementById('customer-default-note-container');
-      const defaultNoteDisplay = document.getElementById('customer-default-note-display');
-      
-      if (!selectedOption || !selectedOption.value) {
-        // No customer selected - show all products, hide default note, clear freight
-        populateProductDropdown();
-        if (defaultNoteContainer) defaultNoteContainer.classList.add('hidden');
-        clearFreightFields();
-        return;
-      }
-      
-      // Get the customer record to find default note and freight settings
-      const customerId = selectedOption.getAttribute('data-airtableid');
-      const customer = CUSTOMERS.find(c => (c.airtableId || c.id) === customerId);
-      
-      // Show/hide default note
-      if (customer && customer.defaultNote && defaultNoteContainer && defaultNoteDisplay) {
-        defaultNoteDisplay.textContent = customer.defaultNote;
-        defaultNoteContainer.classList.remove('hidden');
-      } else if (defaultNoteContainer) {
-        defaultNoteContainer.classList.add('hidden');
-      }
-      
-      // Auto-populate freight settings from customer profile
-      applyCustomerFreightSettings(customer);
-      
-      // Get allowed products from data attribute
-      let allowedProducts = [];
-      try {
-        const allowedProductsJson = selectedOption.getAttribute('data-allowed-products');
-        allowedProducts = allowedProductsJson ? JSON.parse(allowedProductsJson) : [];
-      } catch (err) {
-        console.error('Error parsing allowed products:', err);
-        allowedProducts = [];
-      }
-      
-      // Filter product dropdown
-      const productCount = populateProductDropdown(allowedProducts.length > 0 ? allowedProducts : null);
-      
-      // Log for debugging
-      const customerName = selectedOption.text;
-      if (allowedProducts.length > 0) {
-        console.log(`Customer "${customerName}" restricted to ${allowedProducts.length} product(s)`);
-      } else {
-        console.log(`Customer "${customerName}" has no product restrictions - showing all ${productCount} products`);
-      }
-    }
-    
-    // Clear freight fields on new ticket form
-    function clearFreightFields() {
-      const freightCostField = document.getElementById('ticket-freight-cost');
-      const freightChargeField = document.getElementById('ticket-freight-charge');
-      const freightMarginField = document.getElementById('ticket-freight-margin');
-      const freightSection = document.getElementById('freight-section');
-      
-      if (freightCostField) freightCostField.value = '';
-      if (freightChargeField) freightChargeField.value = '';
-      if (freightMarginField) freightMarginField.value = '';
-      if (freightSection) freightSection.classList.add('hidden');
-    }
-    
-    // Apply customer freight settings to ticket form
-    function applyCustomerFreightSettings(customer) {
-      const freightCostField = document.getElementById('ticket-freight-cost');
-      const freightChargeField = document.getElementById('ticket-freight-charge');
-      const freightSection = document.getElementById('freight-section');
-      
-      // v71: Normalize freight method to handle both 'per_ton' and 'Per Ton' formats
-      const normalizeMethod = (m) => (m || '').toLowerCase().replace(/\s+/g, '_').replace('per_', '');
-      const isDelivered = (m) => normalizeMethod(m) === 'delivered';
-      const hasFreight = customer && customer.freightMethod && customer.freightMethod !== '' && !isDelivered(customer.freightMethod);
-      
-      if (!hasFreight) {
-        // No freight or delivered pricing - hide/clear freight section
-        clearFreightFields();
-        if (freightSection) freightSection.classList.add('hidden');
-        return;
-      }
-      
-      // Show freight section
-      if (freightSection) freightSection.classList.remove('hidden');
-      
-      // Helper to format method for display
-      const formatMethod = (method) => {
-        if (!method) return '';
-        const norm = normalizeMethod(method);
-        if (norm === 'ton') return 'Ton';
-        if (norm === 'yard') return 'Yard';
-        if (norm === 'flat' || norm === 'fee') return 'Flat';
-        return method;
-      };
-      const isFlatFee = (method) => {
-        const norm = normalizeMethod(method);
-        return norm === 'flat' || norm === 'fee';
-      };
-      
-      // Update the freight section header to show method and rate
-      const headerSpan = freightSection?.querySelector('.text-xs.bg-blue-100');
-      if (headerSpan) {
-        const methodLabel = 'Per ' + formatMethod(customer.freightMethod);
-        const rateInfo = isFlatFee(customer.freightMethod) 
-          ? `Flat: $${customer.freightRate || 0}` 
-          : `$${customer.freightRate || 0}/${formatMethod(customer.freightMethod)}`;
-        headerSpan.textContent = `${methodLabel} - ${rateInfo}`;
-      }
-      
-      // Determine cost method (may differ from charge method)
-      const costMethod = customer.freightCostMethod || customer.freightMethod;
-      const costMethodLabel = 'Per ' + formatMethod(costMethod);
-      
-      // DON'T prefill the fields with rates - leave empty so calculated totals are used
-      // The placeholders show the rate for reference
-      if (freightCostField) {
-        freightCostField.value = '';
-        // Show cost method in placeholder if different from charge method
-        if (costMethod !== customer.freightMethod) {
-          freightCostField.placeholder = isFlatFee(costMethod) 
-            ? `Flat: $${customer.freightCost || 0} (${costMethodLabel})` 
-            : `$${customer.freightCost || 0}/${formatMethod(costMethod)}`;
-        } else {
-          freightCostField.placeholder = isFlatFee(customer.freightMethod) 
-            ? `Flat: $${customer.freightCost || 0}` 
-            : `$${customer.freightCost || 0}/${formatMethod(customer.freightMethod)}`;
-        }
-      }
-      
-      if (freightChargeField) {
-        freightChargeField.value = '';
-        freightChargeField.placeholder = isFlatFee(customer.freightMethod) 
-          ? `Flat: $${customer.freightRate || 0}` 
-          : `$${customer.freightRate || 0}/${formatMethod(customer.freightMethod)}`;
-      }
-      
-      // Calculate and display margin
-      calculateFreightMargin();
-      
-      // Store freight method and rates for calculation at save time
-      if (freightSection) {
-        freightSection.setAttribute('data-freight-method', customer.freightMethod);
-        freightSection.setAttribute('data-freight-rate', customer.freightRate || 0);
-        freightSection.setAttribute('data-freight-cost-method', costMethod);
-        freightSection.setAttribute('data-freight-cost', customer.freightCost || 0);
-      }
-      
-      console.log(`Freight settings applied: ChargeMethod=${customer.freightMethod}, Rate=$${customer.freightRate}/unit, CostMethod=${costMethod}, Cost=$${customer.freightCost}/unit`);
     }
 
     // ==================== RENDER FUNCTIONS ====================
@@ -2982,31 +2224,26 @@
           return;
         }
         
-        container.innerHTML = tickets.slice(0, 5).map(t => {
-          // Format date nicely
-          const dateStr = t.date ? new Date(t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
-          const isExported = t.status === 'Closed' && t.exportedToQB;
-          const exportedBadge = isExported ? '<span class="ml-2 px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700">QB</span>' : '';
-          return `
+        container.innerHTML = tickets.slice(0, 5).map(t => `
           <div class="activity-card flex items-center justify-between p-4 bg-slate-50 rounded-xl" onclick="openTicketModal('${t.id}')">
             <div class="flex items-center gap-4">
               <div class="w-14 h-14 bg-gradient-to-br from-gold-100 to-gold-200 rounded-xl flex items-center justify-center border border-gold-200">
                 <span class="font-mono font-bold text-gold-700 text-sm">#${t.number}</span>
               </div>
               <div>
-                <p class="font-semibold text-slate-900">${t.customer || '(No customer)'}${exportedBadge}</p>
+                <p class="font-semibold text-slate-900">${t.customer || '(No customer)'}</p>
                 <p class="text-sm text-slate-500">${t.product} • ${t.carrier}</p>
               </div>
             </div>
             <div class="flex items-center gap-4">
-              <div class="text-right">
+              <div class="text-right hidden sm:block">
                 <p class="font-mono font-bold text-slate-900">${calcTons(t.gross, t.tare)} <span class="text-sm font-normal text-slate-500">tons</span></p>
-                <p class="text-sm text-slate-500">${dateStr}</p>
+                <p class="text-xs text-slate-400">${t.date}</p>
               </div>
               <button type="button" onclick="event.stopPropagation(); printTicket('${t.id}')" class="bg-gold-500 hover:bg-gold-600 text-slate-900 font-semibold py-2 px-3 rounded-lg text-sm transition-all">🖨️</button>
             </div>
           </div>
-        `}).join('');
+        `).join('');
       });
     }
 
@@ -3030,15 +2267,11 @@
       }
       
       container.innerHTML = filteredTickets.map((t, idx) => {
-        const status = getDisplayStatus(t); // Shows "Exported" for closed+exported tickets
-        const isVoid = t.status === 'Void';
+        const status = t.status || 'Open';
+        const isVoid = status === 'Void';
         const rowClass = isVoid ? 'opacity-50' : '';
         const strikeClass = isVoid ? 'line-through' : '';
         const statusBadge = getStatusBadgeHtml(status);
-        const dateStr = t.date ? new Date(t.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
-        
-        // v69: Calculate $ amount using customer's pricing method (per ton or per yard)
-        const amount = calcAmount(t).toFixed(2);
         
         return `
         <tr class="ticket-row ${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'} ${rowClass}" onclick="openTicketModal('${t.id}')">
@@ -3050,13 +2283,11 @@
               ${statusBadge}
             </div>
           </td>
-          <td class="px-6 py-4 text-slate-600 text-sm hidden sm:table-cell">${dateStr}</td>
           <td class="px-6 py-4"><p class="font-semibold text-slate-900 ${strikeClass}">${t.customer || '(No customer)'}</p></td>
           <td class="px-6 py-4 hidden md:table-cell"><span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-slate-200 text-slate-700">${t.product}</span></td>
           <td class="px-6 py-4 text-slate-600 hidden lg:table-cell"><p class="font-medium">${t.carrier}</p></td>
           <td class="px-6 py-4 text-right"><p class="font-mono font-bold text-slate-900">${calcTons(t.gross, t.tare)}</p></td>
           <td class="px-6 py-4 text-right font-mono font-semibold text-slate-900 hidden sm:table-cell">${calcYards(t.gross, t.tare, t.product)}</td>
-          <td class="px-6 py-4 text-right font-mono font-bold text-emerald-600 hidden sm:table-cell amount-column">$${parseFloat(amount).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
           <td class="px-6 py-4 text-center">
             <button type="button" onclick="event.stopPropagation(); printTicket('${t.id}')" class="bg-gold-500 hover:bg-gold-600 text-slate-900 font-semibold py-2 px-3 rounded-lg text-sm transition-all">🖨️</button>
           </td>
@@ -3070,10 +2301,10 @@
         'Open': 'bg-emerald-100 text-emerald-700',
         'Hold': 'bg-amber-100 text-amber-700',
         'Closed': 'bg-blue-100 text-blue-700',
-        'Exported': 'bg-purple-100 text-purple-700',
         'Void': 'bg-red-100 text-red-700'
       };
-      // Always show status badge
+      // Only show badge for non-Open status
+      if (status === 'Open') return '';
       return `<span class="px-2 py-0.5 rounded text-xs font-semibold ${colors[status] || colors['Open']}">${status}</span>`;
     }
 
@@ -3122,8 +2353,7 @@
               <span class="text-gold-700 font-bold">${c.name.charAt(0)}</span>
             </div>
             ${c.priceYard ? `<span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700">$${c.priceYard}/yd</span>` : 
-              c.priceTon ? `<span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">$${c.priceTon}/ton</span>` : 
-              `<span class="text-xs px-2 py-1 rounded-full bg-slate-200 text-slate-600">$13/yd</span>`}
+              c.priceTon ? `<span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">$${c.priceTon}/ton</span>` : ''}
           </div>
           <p class="font-semibold text-slate-900">${c.name}</p>
           <p class="text-sm text-slate-500 mt-1">${[c.city, c.state].filter(Boolean).join(', ') || 'No location'}</p>
@@ -3144,8 +2374,7 @@
           <td class="px-4 py-3 text-slate-600 hidden lg:table-cell">${c.phone || '—'}</td>
           <td class="px-4 py-3">
             ${c.priceYard ? `<span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700">$${c.priceYard}/yd</span>` : 
-              c.priceTon ? `<span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">$${c.priceTon}/ton</span>` : 
-              `<span class="text-xs px-2 py-1 rounded-full bg-slate-200 text-slate-600">$13/yd</span>`}
+              c.priceTon ? `<span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">$${c.priceTon}/ton</span>` : '—'}
           </td>
           <td class="px-4 py-3 text-center">
             ${isAdmin ? `<button type="button" onclick="openEditCustomerModal('${c.id}')" class="text-gold-600 hover:text-gold-700 text-sm font-semibold">Edit</button>` : '—'}
@@ -3156,32 +2385,37 @@
 
     document.getElementById('customer-search')?.addEventListener('input', renderCustomers);
 
-    // ==================== CARRIERS ====================
+    // ==================== TRUCKS & CARRIERS ====================
     function renderTrucksAndCarriers() {
       document.getElementById('carrier-count').textContent = CARRIERS.length;
+      document.getElementById('truck-count').textContent = TRUCKS.length;
       const isAdmin = currentUser?.role === 'admin';
       
-      // Sort carriers alphabetically
-      const sortedCarriers = [...CARRIERS].sort((a, b) => a.name.localeCompare(b.name));
-      
-      document.getElementById('carriers-list').innerHTML = sortedCarriers.map(c => {
-        // Build contact/location info
-        const contactInfo = c.phone || c.email || '';
-        const locationInfo = [c.city, c.state].filter(Boolean).join(', ');
-        const subText = contactInfo && locationInfo ? `${contactInfo} • ${locationInfo}` : contactInfo || locationInfo || 'No contact info';
-        
-        return `
+      document.getElementById('carriers-list').innerHTML = CARRIERS.map(c => `
         <div class="bg-slate-50 rounded-xl p-4 hover:bg-slate-100 transition-colors flex items-center justify-between">
           <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center"><span class="text-blue-600 text-lg">🚚</span></div>
             <div>
               <p class="font-semibold text-slate-900">${c.name}</p>
-              <p class="text-xs text-slate-500">${subText}</p>
+              <p class="text-xs text-slate-500">${c.phone || c.email || 'No contact info'}</p>
             </div>
           </div>
           ${isAdmin ? `<button type="button" onclick="openEditCarrierModal('${c.id}')" class="text-gold-600 hover:text-gold-700 text-xs font-semibold">Edit</button>` : ''}
         </div>
-      `}).join('');
+      `).join('');
+
+      document.getElementById('trucks-list').innerHTML = TRUCKS.map(t => `
+        <div class="bg-slate-50 rounded-xl p-4 hover:bg-slate-100 transition-colors flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center"><span class="text-emerald-600 font-mono font-bold text-xs">${t.truckId.split(' ')[0]}</span></div>
+            <div>
+              <p class="font-semibold text-slate-900">${t.truckId}</p>
+              <p class="text-xs text-slate-500">${t.carrier || 'No carrier'}</p>
+            </div>
+          </div>
+          ${isAdmin ? `<button type="button" onclick="openEditTruckModal('${t.id}')" class="text-gold-600 hover:text-gold-700 text-xs font-semibold">Edit</button>` : ''}
+        </div>
+      `).join('');
     }
 
     // ==================== SETTINGS ====================
@@ -3199,7 +2433,7 @@
       document.getElementById('users-list').innerHTML = USERS.map(u => `
         <div class="bg-slate-50 rounded-xl p-4 flex items-center justify-between">
           <div class="flex items-center gap-3">
-            <div class="${u.role === 'admin' ? 'badge-role-admin' : u.role === 'finance' ? 'badge-role-finance' : 'badge-role-user'} w-10 h-10 rounded-full flex items-center justify-center"><span class="text-white">${u.icon}</span></div>
+            <div class="${u.role === 'admin' ? 'role-admin' : 'role-user'} w-10 h-10 rounded-full flex items-center justify-center"><span class="text-white">${u.icon}</span></div>
             <div>
               <p class="font-semibold text-slate-900">${u.name}</p>
               <p class="text-xs text-slate-500">${u.label} • PIN: ${u.pin}</p>
@@ -3263,53 +2497,19 @@
       // Update status badge
       const statusBadge = document.getElementById('modal-status-badge');
       const status = currentTicket.status || 'Open';
-      const displayStatus = getDisplayStatus(currentTicket); // Shows "Exported" for closed+exported
-      statusBadge.textContent = displayStatus;
-      statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase ' + getStatusBadgeClass(displayStatus);
+      statusBadge.textContent = status;
+      statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase ' + getStatusBadgeClass(status);
       
-      // Show edit button and status controls based on role
+      // Show edit button and status controls only for admin
       const editBtn = document.getElementById('edit-ticket-btn');
-      const deleteBtn = document.getElementById('delete-ticket-btn');
       const statusControls = document.getElementById('admin-status-controls');
-      
-      // Only lock if explicitly Closed or Void (not for Open, Hold, or undefined)
-      const isLocked = (status === 'Closed' || status === 'Void') && status !== undefined;
-      console.log('Ticket status:', status, 'isLocked:', isLocked, 'exportedToQB:', currentTicket.exportedToQB);
-      
       if (currentUser?.role === 'admin') {
-        // Edit button - show for Open/Hold tickets, hide for Closed/Void
-        if (!isLocked) {
-          editBtn?.classList.remove('hidden');
-          editBtn?.classList.add('flex');
-        } else {
-          editBtn?.classList.add('hidden');
-          editBtn?.classList.remove('flex');
-        }
-        // Delete button - removed per Lucas request (void only, keep records)
-        // Status controls - always show container, buttons controlled by updateStatusButtons
+        editBtn?.classList.remove('hidden');
+        editBtn?.classList.add('flex');
         statusControls?.classList.remove('hidden');
-        updateStatusButtons(status || 'Open', currentTicket.exportedToQB);
-      } else if (currentUser?.role === 'finance') {
-        // Finance can only see status controls, not edit/delete
-        editBtn?.classList.add('hidden');
-        editBtn?.classList.remove('flex');
-        deleteBtn?.classList.add('hidden');
-        deleteBtn?.classList.remove('flex');
-        statusControls?.classList.remove('hidden');
-        updateStatusButtons(status || 'Open', currentTicket.exportedToQB);
-      } else if (currentUser?.role === 'user') {
-        // Operator (Doug) can void/unvoid but not edit/delete
-        editBtn?.classList.add('hidden');
-        editBtn?.classList.remove('flex');
-        deleteBtn?.classList.add('hidden');
-        deleteBtn?.classList.remove('flex');
-        statusControls?.classList.remove('hidden');
-        updateStatusButtons(status || 'Open', currentTicket.exportedToQB);
       } else {
         editBtn?.classList.add('hidden');
         editBtn?.classList.remove('flex');
-        deleteBtn?.classList.add('hidden');
-        deleteBtn?.classList.remove('flex');
         statusControls?.classList.add('hidden');
       }
       
@@ -3321,210 +2521,31 @@
         case 'Open': return 'bg-emerald-500 text-white';
         case 'Hold': return 'bg-amber-500 text-white';
         case 'Closed': return 'bg-blue-500 text-white';
-        case 'Exported': return 'bg-purple-500 text-white';
         case 'Void': return 'bg-red-500 text-white';
         default: return 'bg-emerald-500 text-white';
       }
     }
     
-    // Get display status (shows "Exported" for closed+exported tickets)
-    function getDisplayStatus(ticket) {
-      if (ticket.status === 'Closed' && ticket.exportedToQB) {
-        return 'Exported';
-      }
-      return ticket.status || 'Open';
-    }
-    
-    // Update status button visibility based on current ticket status
-    function updateStatusButtons(currentStatus, isExported = false) {
-      const btnOpen = document.getElementById('btn-status-open');
-      const btnHold = document.getElementById('btn-status-hold');
-      const btnClosed = document.getElementById('btn-status-closed');
-      const btnVoid = document.getElementById('btn-status-void');
-      const btnUnvoid = document.getElementById('btn-status-unvoid');
-      const statusButtons = document.getElementById('status-buttons');
-      const lockedMsg = document.getElementById('status-locked-msg');
-      
-      const role = currentUser?.role;
-      const isAdmin = role === 'admin';
-      const isFinance = role === 'finance';
-      const isOperator = role === 'user';
-      
-      // Reset all buttons
-      [btnOpen, btnHold, btnClosed, btnVoid, btnUnvoid].forEach(btn => {
-        if (btn) {
-          btn.classList.add('hidden');
-          btn.disabled = false;
-        }
-      });
-      statusButtons?.classList.remove('hidden');
-      lockedMsg?.classList.add('hidden');
-      
-      // STATUS WORKFLOW RULES:
-      // - Admin: Full control - can change any status, void, and unvoid
-      // - Operator: Can void and unvoid tickets
-      // - Finance: Can ONLY change Hold → Closed
-      // - Exported to QB → LOCKED for everyone
-      
-      // EXPORTED TO QB: Locked for everyone
-      if (isExported) {
-        statusButtons?.classList.add('hidden');
-        lockedMsg?.classList.remove('hidden');
-        lockedMsg.textContent = '🔒 This ticket has been exported to QuickBooks and cannot be changed.';
-        return;
-      }
-      
-      // FINANCE ROLE: Can close Hold tickets AND unvoid voided tickets
-      if (isFinance) {
-        if (currentStatus === 'Void') {
-          // Finance can unvoid
-          btnUnvoid?.classList.remove('hidden');
-        } else if (currentStatus === 'Hold') {
-          btnClosed?.classList.remove('hidden');
-        } else {
-          statusButtons?.classList.add('hidden');
-          lockedMsg?.classList.remove('hidden');
-          lockedMsg.textContent = currentStatus === 'Closed' 
-            ? '🔒 This ticket is locked.' 
-            : '💰 Finance users can only close tickets that are on Hold.';
-        }
-        return;
-      }
-      
-      // OPERATOR ROLE: Can only void (not unvoid)
-      if (isOperator) {
-        if (currentStatus === 'Void') {
-          // Operator cannot unvoid - show locked message
-          statusButtons?.classList.add('hidden');
-          lockedMsg?.classList.remove('hidden');
-          lockedMsg.textContent = '🔒 Contact Lucas or Jesse to unvoid this ticket.';
-        } else if (currentStatus !== 'Closed') {
-          // Show Void button for non-closed tickets
-          btnVoid?.classList.remove('hidden');
-        } else {
-          // Closed tickets - locked for operator
-          statusButtons?.classList.add('hidden');
-          lockedMsg?.classList.remove('hidden');
-          lockedMsg.textContent = '🔒 Closed tickets cannot be changed.';
-        }
-        return;
-      }
-      
-      // ADMIN ROLE: Full control
-      if (isAdmin) {
-        if (currentStatus === 'Void') {
-          // Show Unvoid button only
-          btnUnvoid?.classList.remove('hidden');
-        } else if (currentStatus === 'Closed') {
-          // Closed tickets cannot be reopened
-          statusButtons?.classList.add('hidden');
-          lockedMsg?.classList.remove('hidden');
-          lockedMsg.textContent = '🔒 Closed tickets cannot be reopened.';
-        } else {
-          // Open or Hold - show all except current status and Unvoid
-          if (currentStatus !== 'Open') btnOpen?.classList.remove('hidden');
-          if (currentStatus !== 'Hold') btnHold?.classList.remove('hidden');
-          btnClosed?.classList.remove('hidden');
-          btnVoid?.classList.remove('hidden');
-        }
-        return;
-      }
-    }
-    
     async function changeTicketStatus(newStatus) {
-      // Role-based access control
-      const role = currentUser?.role;
-      const isAdmin = role === 'admin';
-      const isFinance = role === 'finance';
-      const isOperator = role === 'user';
+      if (!currentTicket || currentUser?.role !== 'admin') return;
       
-      if (!currentTicket) {
-        console.log('changeTicketStatus blocked - no currentTicket');
-        return;
-      }
-      
-      const currentStatus = currentTicket.status || 'Open';
-      
-      // Check role permissions
-      // Admin: Full control (void, unvoid, all status changes)
-      // Finance: Can close Hold tickets AND unvoid voided tickets
-      // Operator: Can void only (not unvoid)
-      
-      if (isOperator) {
-        // Operator can only void (any non-closed → Void)
-        const isVoiding = newStatus === 'Void' && currentStatus !== 'Closed';
-        if (!isVoiding) {
-          showToast('Operators can only void tickets. Contact Lucas or Jesse to unvoid.', 'error');
-          return;
-        }
-      } else if (isFinance) {
-        // Finance can close Hold tickets OR unvoid voided tickets
-        const isClosingHold = currentStatus === 'Hold' && newStatus === 'Closed';
-        const isUnvoiding = currentStatus === 'Void' && newStatus === 'Open';
-        if (!isClosingHold && !isUnvoiding) {
-          showToast('Finance users can close Hold tickets or unvoid voided tickets', 'error');
-          return;
-        }
-      } else if (!isAdmin) {
-        console.log('changeTicketStatus blocked - role:', role);
-        return;
-      }
-      
-      // Enforce workflow rules
-      if (currentTicket.exportedToQB) {
-        showToast('Tickets exported to QuickBooks cannot be changed', 'error');
-        return;
-      }
-      
-      if (currentStatus === 'Closed') {
-        showToast('Closed tickets cannot be changed', 'error');
-        return;
-      }
-      
-      // Allow unvoiding for Admin and Finance only
-      if (currentStatus === 'Void' && newStatus !== 'Open') {
-        showToast('Voided tickets can only be unvoided (changed to Open)', 'error');
-        return;
-      }
-      
-      let confirmMsg;
-      if (newStatus === 'Void') {
-        confirmMsg = 'Are you sure you want to VOID this ticket?\n\nThe ticket will be excluded from reports and totals.\nYou can unvoid it later if needed.';
-      } else if (currentStatus === 'Void' && newStatus === 'Open') {
-        confirmMsg = 'Unvoid this ticket and set status to Open?\n\nThe ticket will be included in reports and totals again.';
-      } else if (newStatus === 'Closed') {
-        confirmMsg = 'Close this ticket?\n\nOnce closed, the ticket cannot be reopened.';
-      } else {
-        confirmMsg = `Change ticket status to "${newStatus}"?`;
-      }
+      const confirmMsg = newStatus === 'Void' 
+        ? 'Are you sure you want to VOID this ticket? This will exclude it from all totals.'
+        : `Change ticket status to "${newStatus}"?`;
       
       if (!confirm(confirmMsg)) return;
       
       try {
-        const ticketId = currentTicket.id || currentTicket.airtableId;
-        console.log('=== STATUS UPDATE DEBUG ===');
-        console.log('Ticket ID:', ticketId);
-        console.log('Current Status:', currentStatus);
-        console.log('New Status:', newStatus);
-        console.log('Full currentTicket:', JSON.stringify(currentTicket, null, 2));
-        
-        const requestBody = {
-          id: ticketId,
-          status: newStatus,
-          previousStatus: currentStatus  // v2.2: Pass previous status for auto-email logic
-        };
-        console.log('Request body:', JSON.stringify(requestBody));
-        
         const response = await fetch('/api/tickets/update', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(requestBody)
+          body: JSON.stringify({
+            id: currentTicket.id,
+            fields: { Status: newStatus }
+          })
         });
         
-        console.log('Response status:', response.status);
         const data = await response.json();
-        console.log('Response data:', JSON.stringify(data, null, 2));
-        
         if (data.success) {
           currentTicket.status = newStatus;
           
@@ -3533,73 +2554,16 @@
           statusBadge.textContent = newStatus;
           statusBadge.className = 'px-3 py-1 rounded-full text-xs font-bold uppercase ' + getStatusBadgeClass(newStatus);
           
-          // Update status buttons visibility
-          updateStatusButtons(newStatus, currentTicket.exportedToQB);
-          
           // Refresh ticket list
           await loadTicketsFromAirtable();
           
-          // v2.2: Show appropriate toast based on email status
-          if (data.emailSent) {
-            showToast(`Ticket #${currentTicket.number} closed and emailed to ${data.emailTo}!`, 'success');
-          } else if (data.emailError) {
-            showToast(`Ticket #${currentTicket.number} ${newStatus.toLowerCase()}, but email failed: ${data.emailError}`, 'warning');
-          } else {
-            showToast(`Ticket #${currentTicket.number} marked as ${newStatus}`);
-          }
+          showToast(`Ticket #${currentTicket.number} marked as ${newStatus}`);
         } else {
-          // Show detailed error if available
-          const errorMsg = data.details?.error?.message || data.error || 'Failed to update status';
-          console.error('Status update failed:', errorMsg, data);
-          throw new Error(errorMsg);
+          throw new Error(data.error || 'Failed to update status');
         }
       } catch (error) {
         console.error('Error updating status:', error);
         showToast('Failed to update ticket status: ' + error.message, 'error');
-      }
-    }
-
-    // Delete ticket (admin only)
-    async function deleteTicketFromModal() {
-      if (!currentTicket || currentUser?.role !== 'admin') return;
-      
-      const confirmMsg = `Are you sure you want to PERMANENTLY DELETE ticket #${currentTicket.number}?\n\nThis action cannot be undone.`;
-      
-      if (!confirm(confirmMsg)) return;
-      
-      // Double confirm for safety
-      if (!confirm(`FINAL CONFIRMATION: Delete ticket #${currentTicket.number}?`)) return;
-      
-      try {
-        console.log('Deleting ticket:', currentTicket.id);
-        
-        const response = await fetch(`/api/tickets/delete?id=${currentTicket.id}`, {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' }
-        });
-        
-        const data = await response.json();
-        console.log('Delete response:', data);
-        
-        if (data.success) {
-          // Remove from local array
-          const idx = tickets.findIndex(t => t.id === currentTicket.id);
-          if (idx > -1) tickets.splice(idx, 1);
-          
-          // Close modal and refresh
-          closeModal('ticket-modal');
-          renderTicketsTable();
-          renderRecentActivity();
-          updateStats();
-          
-          showToast(`Ticket #${currentTicket.number} deleted successfully`);
-          currentTicket = null;
-        } else {
-          throw new Error(data.error || 'Failed to delete ticket');
-        }
-      } catch (error) {
-        console.error('Error deleting ticket:', error);
-        showToast('Failed to delete ticket: ' + error.message, 'error');
       }
     }
 
@@ -3625,24 +2589,13 @@
         name: formData.get('name'),
         email: formData.get('email') || '',
         phone: formData.get('phone') || '',
-        // Bill To (for invoicing)
-        billToEmail: formData.get('billToEmail') || '',
-        billToAddress: formData.get('billToAddress') || '',
-        billToCity: formData.get('billToCity') || '',
-        billToState: formData.get('billToState') || '',
-        billToZip: formData.get('billToZip') || '',
-        // Ship To Address
-        shipToAddress: formData.get('shipToAddress') || '',
-        shipToCity: formData.get('shipToCity') || '',
-        shipToState: formData.get('shipToState') || '',
-        shipToZip: formData.get('shipToZip') || '',
-        pricingMethod: formData.get('pricingMethod') || 'Per Yard',
+        address1: formData.get('address1') || '',
+        city: formData.get('city') || '',
+        state: formData.get('state') || '',
+        zip: formData.get('zip') || '',
         priceYard: parseFloat(formData.get('priceYard')) || null,
         priceTon: parseFloat(formData.get('priceTon')) || null,
-        freightMethod: formData.get('freightMethod') || '',
-        freightCostMethod: formData.get('freightCostMethod') || '',
-        freightRate: parseFloat(formData.get('freightRate')) || null,
-        freightCost: parseFloat(formData.get('freightCost')) || null,
+        notes: formData.get('notes') || '',
       };
       
       try {
@@ -3668,53 +2621,19 @@
     function openEditCustomerModal(customerId) {
       const customer = CUSTOMERS.find(c => c.id === customerId);
       if (!customer) return;
-      
+
       document.getElementById('edit-customer-id').value = customer.id;
       document.getElementById('edit-customer-name').value = customer.name;
       document.getElementById('edit-customer-email').value = customer.email || '';
       document.getElementById('edit-customer-phone').value = customer.phone || '';
-      
-      // Bill To (for invoicing)
-      document.getElementById('edit-customer-billToEmail').value = customer.billToEmail || '';
-      document.getElementById('edit-customer-billToAddress').value = customer.billToAddress || customer.address1 || '';
-      document.getElementById('edit-customer-billToCity').value = customer.billToCity || customer.city || '';
-      document.getElementById('edit-customer-billToState').value = customer.billToState || customer.state || '';
-      document.getElementById('edit-customer-billToZip').value = customer.billToZip || customer.zip || '';
-      
-      // Ship To Address
-      document.getElementById('edit-customer-shipToAddress').value = customer.shipToAddress || '';
-      document.getElementById('edit-customer-shipToCity').value = customer.shipToCity || '';
-      document.getElementById('edit-customer-shipToState').value = customer.shipToState || '';
-      document.getElementById('edit-customer-shipToZip').value = customer.shipToZip || '';
-      
-      document.getElementById('edit-customer-pricingMethod').value = customer.pricingMethod || 'Per Yard';
+      document.getElementById('edit-customer-address').value = customer.address1 || '';
+      document.getElementById('edit-customer-city').value = customer.city || '';
+      document.getElementById('edit-customer-state').value = customer.state || '';
+      document.getElementById('edit-customer-zip').value = customer.zip || '';
       document.getElementById('edit-customer-priceYard').value = customer.priceYard || '';
       document.getElementById('edit-customer-priceTon').value = customer.priceTon || '';
-      document.getElementById('edit-customer-defaultNote').value = customer.defaultNote || '';
-      document.getElementById('edit-customer-billingNotes').value = customer.billingNotes || '';
-      
-      // Freight settings
-      document.getElementById('edit-customer-freightMethod').value = customer.freightMethod || '';
-      document.getElementById('edit-customer-freightRate').value = customer.freightRate || '';
-      document.getElementById('edit-customer-freightCostMethod').value = customer.freightCostMethod || '';
-      document.getElementById('edit-customer-freightCost').value = customer.freightCost || '';
-      
-      // Email settings
-      document.getElementById('edit-customer-emailReceipts').checked = customer.emailReceipts || false;
-      
-      // Populate product checkboxes
-      const allowedProducts = customer.allowedProducts || [];
-      const checkboxContainer = document.getElementById('allowed-products-checkboxes');
-      checkboxContainer.innerHTML = PRODUCTS.filter(p => p.airtableId).map(p => {
-        const isChecked = allowedProducts.includes(p.airtableId) ? 'checked' : '';
-        return `
-          <label class="flex items-center gap-2 p-2 rounded-lg hover:bg-slate-50 cursor-pointer">
-            <input type="checkbox" name="allowedProducts" value="${p.airtableId}" ${isChecked} class="w-4 h-4 text-gold-500 rounded border-slate-300 focus:ring-gold-500">
-            <span class="text-sm font-medium text-slate-700">${p.name}</span>
-          </label>
-        `;
-      }).join('');
-      
+      document.getElementById('edit-customer-notes').value = customer.notes || '';
+
       openModal('edit-customer-modal');
     }
 
@@ -3730,64 +2649,31 @@
       spinnerEl.classList.remove('hidden');
       
       const formData = new FormData(this);
-      
-      // Get selected product IDs from checkboxes
-      const allowedProducts = [];
-      document.querySelectorAll('#allowed-products-checkboxes input[type="checkbox"]:checked').forEach(cb => {
-        allowedProducts.push(cb.value);
-      });
-      
       const customerData = {
         id: formData.get('id'),
         name: formData.get('name'),
         email: formData.get('email') || '',
         phone: formData.get('phone') || '',
-        // Bill To (for invoicing)
-        billToEmail: formData.get('billToEmail') || '',
-        billToAddress: formData.get('billToAddress') || '',
-        billToCity: formData.get('billToCity') || '',
-        billToState: formData.get('billToState') || '',
-        billToZip: formData.get('billToZip') || '',
-        // Ship To Address
-        shipToAddress: formData.get('shipToAddress') || '',
-        shipToCity: formData.get('shipToCity') || '',
-        shipToState: formData.get('shipToState') || '',
-        shipToZip: formData.get('shipToZip') || '',
-        pricingMethod: formData.get('pricingMethod') || 'Per Yard',
+        address1: formData.get('address1') || '',
+        city: formData.get('city') || '',
+        state: formData.get('state') || '',
+        zip: formData.get('zip') || '',
         priceYard: parseFloat(formData.get('priceYard')) || null,
         priceTon: parseFloat(formData.get('priceTon')) || null,
-        defaultNote: formData.get('defaultNote') || '',
-        billingNotes: formData.get('billingNotes') || '',
-        freightMethod: formData.get('freightMethod') || '',
-        freightCostMethod: formData.get('freightCostMethod') || '',
-        freightRate: parseFloat(formData.get('freightRate')) || null,
-        freightCost: parseFloat(formData.get('freightCost')) || null,
-        allowedProducts: allowedProducts,
-        // Email settings
-        emailReceipts: document.getElementById('edit-customer-emailReceipts').checked,
+        notes: formData.get('notes') || '',
       };
       
       try {
         const updatedCustomer = await updateCustomerInAirtable(customerData);
         
-        // Preserve allowedProducts from what we submitted if server doesn't return it
-        if (!updatedCustomer.allowedProducts || updatedCustomer.allowedProducts.length === 0) {
-          updatedCustomer.allowedProducts = allowedProducts;
-        }
-        
         const idx = CUSTOMERS.findIndex(c => c.id === customerData.id);
         if (idx !== -1) {
-          CUSTOMERS[idx] = { ...CUSTOMERS[idx], ...updatedCustomer };
+          CUSTOMERS[idx] = updatedCustomer;
         }
         
         closeModal('edit-customer-modal');
         populateDropdowns();
         renderCustomers();
-        
-        // Show warning if billing fields weren't saved
-        if (updatedCustomer._warning) {
-          showToast(updatedCustomer._warning, 'warning');
-        }
         showToast(`Customer "${updatedCustomer.name}" updated successfully!`);
         
       } catch (error) {
@@ -3975,139 +2861,63 @@
     }
 
     function openEditCarrierModal(carrierId) {
-      const carrier = CARRIERS.find(c => c.id === carrierId || String(c.id) === String(carrierId));
-      if (!carrier) {
-        console.error('Carrier not found:', carrierId);
-        showToast('Carrier not found', 'error');
-        return;
-      }
+      const carrier = CARRIERS.find(c => c.id === carrierId);
+      if (!carrier) return;
       
       document.getElementById('edit-carrier-id').value = carrier.id;
       document.getElementById('edit-carrier-name').value = carrier.name;
       document.getElementById('edit-carrier-phone').value = carrier.phone || '';
       document.getElementById('edit-carrier-email').value = carrier.email || '';
-      document.getElementById('edit-carrier-address').value = carrier.address || '';
-      document.getElementById('edit-carrier-city').value = carrier.city || '';
-      document.getElementById('edit-carrier-state').value = carrier.state || '';
-      document.getElementById('edit-carrier-zip').value = carrier.zip || '';
       openModal('edit-carrier-modal');
     }
 
-    document.getElementById('add-carrier-form').addEventListener('submit', async function(e) {
+    document.getElementById('add-carrier-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const formData = new FormData(this);
-      const submitBtn = this.querySelector('button[type="submit"]');
-      const originalText = submitBtn.textContent;
+      const newCarrier = {
+        id: Date.now(),
+        name: formData.get('carrierName').trim(),
+        phone: formData.get('carrierPhone')?.trim() || '',
+        email: formData.get('carrierEmail')?.trim() || ''
+      };
       
-      try {
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Adding...';
-        
-        const carrierData = {
-          name: formData.get('carrierName').trim(),
-          phone: formData.get('carrierPhone')?.trim() || '',
-          email: formData.get('carrierEmail')?.trim() || '',
-          address: formData.get('carrierAddress')?.trim() || '',
-          city: formData.get('carrierCity')?.trim() || '',
-          state: formData.get('carrierState')?.trim() || '',
-          zip: formData.get('carrierZip')?.trim() || ''
-        };
-        
-        const response = await fetch('/api/carriers/add', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(carrierData)
-        });
-        
-        const result = await response.json();
-        
-        if (!response.ok || !result.success) {
-          throw new Error(result.error || 'Failed to add carrier');
-        }
-        
-        // Add to local array with Airtable ID
-        CARRIERS.push(result.carrier);
-        closeModal('add-carrier-modal');
-        this.reset();
-        populateDropdowns();
-        renderTrucksAndCarriers();
-        showToast(`Carrier "${result.carrier.name}" added successfully!`);
-        
-      } catch (error) {
-        console.error('Error adding carrier:', error);
-        showToast(error.message || 'Failed to add carrier', 'error');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-      }
+      CARRIERS.push(newCarrier);
+      closeModal('add-carrier-modal');
+      populateDropdowns();
+      renderSettings();
+      showToast(`Carrier "${newCarrier.name}" added successfully!`);
     });
 
-    document.getElementById('edit-carrier-form').addEventListener('submit', async function(e) {
+    document.getElementById('edit-carrier-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const formData = new FormData(this);
-      const submitBtn = this.querySelector('button[type="submit"]');
-      const originalText = submitBtn.textContent;
-      const carrierId = formData.get('carrierId');
+      const carrierId = parseInt(formData.get('carrierId'));
+      const idx = CARRIERS.findIndex(c => c.id === carrierId);
       
-      try {
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Saving...';
-        
-        const carrierData = {
-          id: carrierId,
-          name: formData.get('carrierName').trim(),
-          phone: formData.get('carrierPhone')?.trim() || '',
-          email: formData.get('carrierEmail')?.trim() || '',
-          address: formData.get('carrierAddress')?.trim() || '',
-          city: formData.get('carrierCity')?.trim() || '',
-          state: formData.get('carrierState')?.trim() || '',
-          zip: formData.get('carrierZip')?.trim() || ''
-        };
-        
-        const response = await fetch('/api/carriers/update', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(carrierData)
-        });
-        
-        const result = await response.json();
-        
-        if (!response.ok || !result.success) {
-          throw new Error(result.error || 'Failed to update carrier');
-        }
-        
-        // Update local array
-        const idx = CARRIERS.findIndex(c => c.id === carrierId || String(c.id) === carrierId);
-        if (idx !== -1) {
-          CARRIERS[idx] = result.carrier;
-        }
+      if (idx !== -1) {
+        CARRIERS[idx].name = formData.get('carrierName').trim();
+        CARRIERS[idx].phone = formData.get('carrierPhone')?.trim() || '';
+        CARRIERS[idx].email = formData.get('carrierEmail')?.trim() || '';
         
         closeModal('edit-carrier-modal');
         populateDropdowns();
-        renderTrucksAndCarriers();
-        showToast(`Carrier "${result.carrier.name}" updated successfully!`);
-        
-      } catch (error) {
-        console.error('Error updating carrier:', error);
-        showToast(error.message || 'Failed to update carrier', 'error');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
+        renderSettings();
+        showToast(`Carrier "${CARRIERS[idx].name}" updated successfully!`);
       }
     });
 
     function confirmDeleteCarrier() {
-      const carrierId = document.getElementById('edit-carrier-id').value;
-      const carrier = CARRIERS.find(c => c.id === carrierId || String(c.id) === carrierId);
+      const carrierId = parseInt(document.getElementById('edit-carrier-id').value);
+      const carrier = CARRIERS.find(c => c.id === carrierId);
       if (!carrier) return;
       
       if (confirm(`Are you sure you want to delete "${carrier.name}"?`)) {
-        const idx = CARRIERS.findIndex(c => c.id === carrierId || String(c.id) === carrierId);
+        const idx = CARRIERS.findIndex(c => c.id === carrierId);
         if (idx !== -1) {
           CARRIERS.splice(idx, 1);
           closeModal('edit-carrier-modal');
           populateDropdowns();
-          renderTrucksAndCarriers();
+          renderSettings();
           showToast(`Carrier deleted successfully!`);
         }
       }
@@ -4190,10 +3000,7 @@
       const form = document.getElementById('edit-product-form');
       form.querySelector('[name="productId"]').value = productId;
       form.querySelector('[name="productName"]').value = product.name;
-      form.querySelector('[name="productWeight"]').value = product.lbsPerYard || '';
-      form.querySelector('[name="productPriceYard"]').value = product.priceYard || '';
-      form.querySelector('[name="productPriceTon"]').value = product.priceTon || '';
-      form.querySelector('[name="productQBCode"]').value = product.qbCode || '';
+      form.querySelector('[name="productWeight"]').value = product.lbsPerYard;
       
       // Show warning if not linked to Airtable
       const warning = document.getElementById('product-airtable-warning');
@@ -4213,11 +3020,7 @@
       const product = PRODUCTS.find(p => p.id === productId);
       if (!product) return;
       
-      const newWeight = parseInt(this.querySelector('[name="productWeight"]').value) || 0;
-      const newPriceYard = parseFloat(this.querySelector('[name="productPriceYard"]').value) || null;
-      const newPriceTon = parseFloat(this.querySelector('[name="productPriceTon"]').value) || null;
-      const newQBCode = this.querySelector('[name="productQBCode"]').value.trim() || '';
-      
+      const newWeight = parseInt(this.querySelector('[name="productWeight"]').value);
       const btn = document.getElementById('save-product-btn');
       const originalText = btn.textContent;
       
@@ -4227,9 +3030,6 @@
       try {
         // Update local data
         product.lbsPerYard = newWeight;
-        product.priceYard = newPriceYard;
-        product.priceTon = newPriceTon;
-        product.qbCode = newQBCode;
         
         // Try to save to Airtable if linked
         if (product.airtableId) {
@@ -4242,10 +3042,6 @@
         closeModal('edit-product-modal');
         populateDropdowns();
         renderSettings();
-        // Refresh pricing view if it's active
-        if (typeof initPricingView === 'function' && document.getElementById('pricing')?.classList.contains('hidden') === false) {
-          initPricingView();
-        }
         
       } catch (error) {
         showToast('Failed to save: ' + error.message, 'error');
@@ -4264,14 +3060,13 @@
     document.getElementById('add-user-form').addEventListener('submit', function(e) {
       e.preventDefault();
       const formData = new FormData(this);
-      const role = formData.get('userRole');
       const newUser = {
         id: 'user_' + Date.now(),
         name: formData.get('userName'),
-        role: role,
+        role: formData.get('userRole'),
         pin: formData.get('userPin'),
-        icon: role === 'admin' ? '👑' : role === 'finance' ? '💰' : '👷',
-        label: role === 'admin' ? 'Administrator' : role === 'finance' ? 'Finance' : 'Operator'
+        icon: formData.get('userRole') === 'admin' ? '👑' : '👷',
+        label: formData.get('userRole') === 'admin' ? 'Administrator' : 'Operator'
       };
       
       USERS.push(newUser);
@@ -4313,8 +3108,8 @@
       user.name = document.getElementById('edit-user-name').value;
       user.role = newRole;
       user.pin = document.getElementById('edit-user-pin').value;
-      user.icon = newRole === 'admin' ? '👑' : newRole === 'finance' ? '💰' : '👷';
-      user.label = newRole === 'admin' ? 'Administrator' : newRole === 'finance' ? 'Finance' : 'Operator';
+      user.icon = newRole === 'admin' ? '👑' : '👷';
+      user.label = newRole === 'admin' ? 'Administrator' : 'Operator';
       
       saveUsersToStorage();
       closeModal('edit-user-modal');
@@ -4371,31 +3166,7 @@
       const stored = localStorage.getItem('beaverPumiceUsers');
       if (stored) {
         try {
-          const storedUsers = JSON.parse(stored);
-          
-          // v70: Default users with correct roles - these ALWAYS override cached values
-          const defaultUsers = [
-            { id: 'admin', name: 'Lucas', role: 'admin', pin: '1234', icon: '👑', label: 'Administrator' },
-            { id: 'admin2', name: 'Brent', role: 'admin', pin: '5678', icon: '👑', label: 'Administrator' },
-            { id: 'finance', name: 'Jesse', role: 'admin', pin: '1357', icon: '💰', label: 'Finance/Admin' },
-            { id: 'user', name: 'Doug', role: 'user', pin: '0000', icon: '👷', label: 'Operator' }
-          ];
-          
-          // Merge: keep custom users from storage, but ensure defaults exist
-          USERS = [...storedUsers];
-          defaultUsers.forEach(defaultUser => {
-            const existingIndex = USERS.findIndex(u => u.id === defaultUser.id);
-            if (existingIndex >= 0) {
-              // v70: FORCE update default users' roles from code (overrides localStorage)
-              USERS[existingIndex].role = defaultUser.role;
-              USERS[existingIndex].icon = defaultUser.icon;
-              USERS[existingIndex].label = defaultUser.label;
-              USERS[existingIndex].pin = defaultUser.pin;
-            } else {
-              USERS.push(defaultUser);
-            }
-          });
-          
+          USERS = JSON.parse(stored);
         } catch (e) {
           console.error('Failed to load users from storage:', e);
         }
@@ -4465,71 +3236,8 @@
     }
     
     function openEmailForTicket(ticket) {
-      // Show email prompt
-      const customer = CUSTOMERS.find(c => c.id === ticket.customerId || c.name === ticket.customer);
-      const defaultEmail = customer?.email || customer?.billToEmail || '';
-      
-      const recipientEmail = prompt('Enter email address to send ticket to:', defaultEmail);
-      
-      if (!recipientEmail) {
-        return; // User cancelled
-      }
-      
-      // Validate email format
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(recipientEmail)) {
-        showToast('Invalid email address', 'error');
-        return;
-      }
-      
-      // Show sending indicator
-      showToast('Sending email...', 'info');
-      
-      // Prepare ticket data for email - use same calculation as main UI
-      const net = (ticket.gross || 0) - (ticket.tare || 0);
-      const tons = (net / 2000).toFixed(2);
-      const product = PRODUCTS.find(p => p.id === ticket.productId || p.name === ticket.product);
-      const lbsPerYard = (product && product.lbsPerYard > 0) ? product.lbsPerYard : 1350;
-      const yards = (net / lbsPerYard).toFixed(2); // Same formula as calcYards()
-      
-      const ticketData = {
-        ticketNumber: ticket.number,
-        date: ticket.date,
-        time: '',
-        customerName: ticket.customer,
-        productName: ticket.product,
-        grossWeight: ticket.gross || 0,
-        tareWeight: ticket.tare || 0,
-        netWeight: net,
-        netTons: parseFloat(tons),
-        netYards: parseFloat(yards),
-        carrierName: ticket.carrier || '',
-        truckId: ticket.truck || '',
-        notes: ticket.note || ''
-      };
-      
-      // Call email API
-      fetch('/api/email/send-ticket', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ticket: ticketData,
-          customer: customer || {},
-          sendTo: recipientEmail
-        })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          showToast(`Email sent to ${recipientEmail}!`, 'success');
-        } else {
-          showToast(data.error || 'Failed to send email', 'error');
-        }
-      })
-      .catch(error => {
-        console.error('Email send error:', error);
-        showToast('Failed to send email: ' + error.message, 'error');
-      });
+      // Deprecated - use copyTicketToClipboard instead
+      copyTicketDetailsToClipboard(ticket);
     }
     
     function copyTicketToClipboard() {
@@ -4585,110 +3293,18 @@ Beaver Pumice • Chemult, Oregon
         showToast('Ticket details copied to clipboard!');
       });
     }
-
-    // v2.2-HOTFIX: Auto-send ticket email on creation (if customer has auto-email enabled)
-    async function sendTicketEmail(ticketId, ticket, customer, recipientEmail) {
-      console.log('sendTicketEmail called:', { ticketId, ticketNumber: ticket.number, recipientEmail });
-
-      try {
-        const netWeight = ticket.netLbs || ((ticket.gross || 0) - (ticket.tare || 0));
-        const netTons = ticket.netTons || (netWeight / 2000);
-
-        // v2.2-HOTFIX: Calculate netYards if Airtable didn't provide it
-        // This fixes the 0.00 CY issue Grant reported
-        let netYards = ticket.netYards || 0;
-
-        if (!netYards || netYards === 0) {
-          console.warn('⚠️ netYards missing from Airtable, calculating fallback');
-          // Get product to find lbs/yard conversion
-          const product = PRODUCTS.find(p =>
-            p.id === ticket.productId ||
-            p.airtableId === ticket.productId ||
-            p.name === ticket.product
-          );
-          const lbsPerYard = (product && product.lbsPerYard > 0) ? product.lbsPerYard : 1350;
-          netYards = netWeight / lbsPerYard;
-          console.log(`📐 Calculated netYards: ${netWeight} lbs ÷ ${lbsPerYard} lbs/yd = ${netYards.toFixed(2)} yards`);
-        }
-
-        // Prepare ticket data for email - use data from Airtable (already calculated)
-        const ticketData = {
-          ticketNumber: ticket.number,
-          date: ticket.date || new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }),
-          time: '',
-          customerName: ticket.customer || customer?.name || '',
-          productName: ticket.product || '',
-          grossWeight: ticket.gross || 0,
-          tareWeight: ticket.tare || 0,
-          netWeight: netWeight,
-          netTons: netTons,
-          netYards: netYards,  // v2.2-HOTFIX: Use calculated or Airtable value
-          carrierName: ticket.carrier || '',
-          truckId: ticket.truck || '',
-          notes: ticket.note || ticket.customerNote || ''
-        };
-
-        console.log('📧 Email ticket data:', ticketData);
-        console.log('✅ netYards for email:', ticketData.netYards.toFixed(2), 'CY');
-
-        // Call email API
-        const response = await fetch('/api/email/send-ticket', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            ticket: ticketData,
-            customer: customer || {},
-            sendTo: recipientEmail
-          })
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          console.log(`✅ Email sent successfully to ${recipientEmail}`);
-          return { sent: true };
-        } else {
-          console.error('Email send failed:', data.error);
-          return { sent: false, reason: data.error || 'Unknown error' };
-        }
-      } catch (error) {
-        console.error('Email send exception:', error);
-        return { sent: false, reason: error.message };
-      }
-    }
-
+    
     function hideSuccessBanner() { document.getElementById('success-banner').classList.add('hidden'); }
 
     // ==================== EDIT TICKET (Admin Only) ====================
     function editTicketFromModal() {
-      console.log('editTicketFromModal called');
-      console.log('currentTicket:', currentTicket);
-      console.log('currentUser:', currentUser);
-      
-      if (!currentTicket) {
-        console.error('No currentTicket set');
-        showToast('No ticket selected', 'error');
-        return;
-      }
-      if (currentUser?.role !== 'admin') {
-        console.error('User is not admin');
-        showToast('Admin access required', 'error');
-        return;
-      }
-      
+      if (!currentTicket || currentUser?.role !== 'admin') return;
       openEditTicketModal(currentTicket.id);
     }
 
     function openEditTicketModal(ticketId) {
-      console.log('openEditTicketModal called with ticketId:', ticketId);
       const ticket = tickets.find(t => t.id === ticketId);
-      console.log('Found ticket:', ticket);
-      
-      if (!ticket) {
-        console.error('Ticket not found in tickets array');
-        showToast('Ticket not found', 'error');
-        return;
-      }
+      if (!ticket) return;
       
       document.getElementById('edit-ticket-id').value = ticket.id;
       document.getElementById('edit-ticket-number').textContent = ticket.number;
@@ -4696,11 +3312,6 @@ Beaver Pumice • Chemult, Oregon
       document.getElementById('edit-ticket-tare').value = ticket.tare || '';
       document.getElementById('edit-ticket-po').value = ticket.po || '';
       document.getElementById('edit-ticket-note').value = ticket.note || '';
-      
-      // Populate freight fields
-      document.getElementById('edit-ticket-freight-cost').value = ticket.freightCost || '';
-      document.getElementById('edit-ticket-freight-charge').value = ticket.freightCharge || '';
-      calculateEditFreightMargin();
       
       // Populate dropdowns
       populateEditTicketDropdowns(ticket);
@@ -4714,72 +3325,29 @@ Beaver Pumice • Chemult, Oregon
       const customerSelect = document.getElementById('edit-ticket-customer');
       customerSelect.innerHTML = '<option value="">Select customer...</option>';
       CUSTOMERS.forEach(c => {
-        const selected = (c.name === ticket.customer || c.id === ticket.customerId) ? 'selected' : '';
-        const allowedProducts = JSON.stringify(c.allowedProducts || []);
-        customerSelect.innerHTML += `<option value="${c.id}" data-allowed-products='${allowedProducts}' ${selected}>${c.name}</option>`;
+        const selected = (c.name === ticket.customer || c.airtableId === ticket.customerId) ? 'selected' : '';
+        customerSelect.innerHTML += `<option value="${c.airtableId}" ${selected}>${c.name}</option>`;
       });
-      
-      // Add customer change listener for edit modal
-      customerSelect.removeEventListener('change', handleEditCustomerChange);
-      customerSelect.addEventListener('change', handleEditCustomerChange);
       
       // Carrier dropdown
       const carrierSelect = document.getElementById('edit-ticket-carrier');
       carrierSelect.innerHTML = '<option value="">Select carrier...</option>';
       CARRIERS.forEach(c => {
-        const selected = (c.name === ticket.carrier || c.id === ticket.carrierId) ? 'selected' : '';
-        carrierSelect.innerHTML += `<option value="${c.id}" ${selected}>${c.name}</option>`;
+        const selected = (c.name === ticket.carrier || c.airtableId === ticket.carrierId) ? 'selected' : '';
+        carrierSelect.innerHTML += `<option value="${c.airtableId || c.id}" ${selected}>${c.name}</option>`;
       });
       
       // Truck text input (no longer a dropdown)
       const truckInput = document.getElementById('edit-ticket-truck');
       truckInput.value = ticket.truck || '';
       
-      // Product dropdown - filter based on selected customer's allowed products
-      populateEditProductDropdown(ticket.product, ticket.productId);
-    }
-    
-    // Populate edit modal product dropdown (optionally filtered)
-    function populateEditProductDropdown(currentProductName = null, currentProductId = null) {
-      const customerSelect = document.getElementById('edit-ticket-customer');
+      // Product dropdown
       const productSelect = document.getElementById('edit-ticket-product');
-      
-      // Get allowed products from selected customer
-      let allowedProducts = [];
-      const selectedOption = customerSelect.selectedOptions[0];
-      if (selectedOption && selectedOption.value) {
-        try {
-          const allowedProductsJson = selectedOption.getAttribute('data-allowed-products');
-          allowedProducts = allowedProductsJson ? JSON.parse(allowedProductsJson) : [];
-        } catch (err) {
-          allowedProducts = [];
-        }
-      }
-      
       productSelect.innerHTML = '<option value="">Select product...</option>';
-      
-      let productsToShow = PRODUCTS;
-      if (allowedProducts.length > 0) {
-        productsToShow = PRODUCTS.filter(p => 
-          allowedProducts.includes(p.id) || allowedProducts.includes(p.airtableId)
-        );
-      }
-      
-      productsToShow.forEach(p => {
-        const productId = p.id || p.airtableId;
-        const selected = (p.name === currentProductName || productId === currentProductId) ? 'selected' : '';
-        productSelect.innerHTML += `<option value="${productId}" ${selected}>${p.name}</option>`;
+      PRODUCTS.forEach(p => {
+        const selected = (p.name === ticket.product || p.airtableId === ticket.productId) ? 'selected' : '';
+        productSelect.innerHTML += `<option value="${p.airtableId || p.id}" ${selected}>${p.name}</option>`;
       });
-      
-      // Auto-select if only one product
-      if (productsToShow.length === 1 && !currentProductName && !currentProductId) {
-        productSelect.value = productsToShow[0].id || productsToShow[0].airtableId;
-      }
-    }
-    
-    // Handle customer change in edit modal
-    function handleEditCustomerChange(e) {
-      populateEditProductDropdown();
     }
 
     document.getElementById('edit-ticket-form')?.addEventListener('submit', async function(e) {
@@ -4798,9 +3366,7 @@ Beaver Pumice • Chemult, Oregon
         gross: parseInt(document.getElementById('edit-ticket-gross').value) || 0,
         tare: parseInt(document.getElementById('edit-ticket-tare').value) || 0,
         po: document.getElementById('edit-ticket-po').value,
-        note: document.getElementById('edit-ticket-note').value,
-        freightCost: parseFloat(document.getElementById('edit-ticket-freight-cost').value) || 0,
-        freightCharge: parseFloat(document.getElementById('edit-ticket-freight-charge').value) || 0
+        note: document.getElementById('edit-ticket-note').value
       };
       
       try {
@@ -4814,22 +3380,16 @@ Beaver Pumice • Chemult, Oregon
         
         const result = await response.json();
         
-        // Update local ticket data - include IDs so re-render works correctly
+        // Update local ticket data
         Object.assign(ticket, {
-          customerId: updateData.customerId,  // v69: Fix - update the ID too
           customer: document.getElementById('edit-ticket-customer').selectedOptions[0]?.text || '',
-          carrierId: updateData.carrierId,    // v69: Fix - update the ID too
           carrier: document.getElementById('edit-ticket-carrier').selectedOptions[0]?.text || '',
-          productId: updateData.productId,    // v69: Fix - update the ID too
           truck: document.getElementById('edit-ticket-truck').value.trim(), // Truck is now text
           product: document.getElementById('edit-ticket-product').selectedOptions[0]?.text || '',
           gross: updateData.gross,
           tare: updateData.tare,
           po: updateData.po,
-          note: updateData.note,
-          freightCost: updateData.freightCost,
-          freightCharge: updateData.freightCharge,
-          freightMargin: updateData.freightCharge - updateData.freightCost
+          note: updateData.note
         });
         
         closeModal('edit-ticket-modal');
@@ -4848,7 +3408,6 @@ Beaver Pumice • Chemult, Oregon
     const grossInput = document.getElementById('ticket-gross');
     const tareInput = document.getElementById('ticket-tare');
     const productSelect = document.getElementById('ticket-product');
-    const customerSelectForCalc = document.getElementById('ticket-customer');
 
     function updateCalcs() {
       const gross = parseInt(grossInput?.value) || 0;
@@ -4857,41 +3416,9 @@ Beaver Pumice • Chemult, Oregon
       
       if (gross && tare) {
         const net = gross - tare;
-        const tons = net / 2000;
-        const yards = product ? parseFloat(calcYards(gross, tare, product)) : 0;
-        
         document.getElementById('calc-net').textContent = net.toLocaleString();
-        document.getElementById('calc-tons').textContent = tons.toFixed(2);
-        document.getElementById('calc-yards').textContent = product ? yards.toFixed(2) : '—';
-        
-        // v69: Calculate $ amount based on customer's pricing method
-        const customerId = customerSelectForCalc?.selectedOptions[0]?.dataset.airtableid;
-        const customer = CUSTOMERS.find(c => (c.airtableId || c.id) === customerId);
-        
-        let amount = 0;
-        let rateInfo = '—';
-        
-        if (customer) {
-          const method = (customer.pricingMethod || '').toLowerCase();
-          const billByTon = method.includes('ton') || (customer.priceTon && !customer.priceYard);
-          
-          if (billByTon && customer.priceTon) {
-            amount = tons * customer.priceTon;
-            rateInfo = `$${customer.priceTon}/ton`;
-          } else if (customer.priceYard) {
-            amount = yards * customer.priceYard;
-            rateInfo = `$${customer.priceYard}/yard`;
-          } else {
-            amount = yards * 13;
-            rateInfo = '$13/yard (default)';
-          }
-        } else {
-          amount = yards * 13;
-          rateInfo = 'Select customer';
-        }
-        
-        document.getElementById('calc-amount').textContent = '$' + amount.toFixed(2);
-        document.getElementById('calc-rate-info').textContent = rateInfo;
+        document.getElementById('calc-tons').textContent = (net / 2000).toFixed(2);
+        document.getElementById('calc-yards').textContent = product ? calcYards(gross, tare, product) : '—';
         document.getElementById('calculations').classList.remove('hidden');
       } else {
         document.getElementById('calculations').classList.add('hidden');
@@ -4901,36 +3428,17 @@ Beaver Pumice • Chemult, Oregon
     grossInput?.addEventListener('input', updateCalcs);
     tareInput?.addEventListener('input', updateCalcs);
     productSelect?.addEventListener('change', updateCalcs);
-    customerSelectForCalc?.addEventListener('change', updateCalcs); // v69: Recalc when customer changes
 
-    // ==================== FREIGHT MARGIN CALCULATION ====================
-    function calculateFreightMargin() {
-      const cost = parseFloat(document.getElementById('ticket-freight-cost')?.value) || 0;
-      const charge = parseFloat(document.getElementById('ticket-freight-charge')?.value) || 0;
-      const margin = charge - cost;
-      const marginField = document.getElementById('ticket-freight-margin');
-      if (marginField) {
-        marginField.value = margin.toFixed(2);
-        marginField.classList.toggle('text-green-700', margin >= 0);
-        marginField.classList.toggle('text-red-600', margin < 0);
-        marginField.classList.toggle('bg-green-50', margin >= 0);
-        marginField.classList.toggle('bg-red-50', margin < 0);
+    // Auto-populate ticket note from customer's default notes
+    const customerSelect = document.getElementById('ticket-customer');
+    const ticketNoteInput = document.getElementById('ticket-note');
+    customerSelect?.addEventListener('change', function() {
+      const selectedOption = this.options[this.selectedIndex];
+      const customerNotes = selectedOption?.dataset?.notes || '';
+      if (ticketNoteInput && customerNotes) {
+        ticketNoteInput.value = customerNotes;
       }
-    }
-    
-    function calculateEditFreightMargin() {
-      const cost = parseFloat(document.getElementById('edit-ticket-freight-cost')?.value) || 0;
-      const charge = parseFloat(document.getElementById('edit-ticket-freight-charge')?.value) || 0;
-      const margin = charge - cost;
-      const marginField = document.getElementById('edit-ticket-freight-margin');
-      if (marginField) {
-        marginField.value = margin.toFixed(2);
-        marginField.classList.toggle('text-green-700', margin >= 0);
-        marginField.classList.toggle('text-red-600', margin < 0);
-        marginField.classList.toggle('bg-green-50', margin >= 0);
-        marginField.classList.toggle('bg-red-50', margin < 0);
-      }
-    }
+    });
 
     document.getElementById('ticket-form').addEventListener('submit', async function(e) {
       e.preventDefault();
@@ -4950,125 +3458,15 @@ Beaver Pumice • Chemult, Oregon
         const truckInput = document.getElementById('ticket-truck');
         const productSelect = document.getElementById('ticket-product');
         
-        // Get customer's default note
-        const customerId = customerSelect.selectedOptions[0]?.dataset.airtableid;
-        const customer = CUSTOMERS.find(c => (c.airtableId || c.id) === customerId);
-        const customerDefaultNote = customer?.defaultNote || '';
-        
-        // Calculate weights
-        const gross = parseInt(document.getElementById('ticket-gross').value) || 0;
-        const tare = parseInt(document.getElementById('ticket-tare').value) || 0;
-        const netLbs = gross - tare;
-        const netTons = netLbs / 2000;
-        
-        // Get product for yard calculation
-        const productOption = productSelect.selectedOptions[0];
-        const lbsPerYard = parseFloat(productOption?.dataset.lbs) || 2700;
-        const netYards = netLbs / lbsPerYard;
-        
-        // Calculate freight totals based on customer settings
-        // IMPORTANT: Freight Charge (customer billing) and Freight Cost (truck payment) can use DIFFERENT methods
-        // e.g., Charge customer per yard, pay truck per ton
-        let freightCostTotal = 0;
-        let freightChargeTotal = 0;
-        
-        // v71: Normalize freight method to handle both 'per_ton' and 'Per Ton' formats
-        const normalizeMethod = (m) => (m || '').toLowerCase().replace(/\s+/g, '_').replace('per_', '');
-        const isPerTon = (m) => normalizeMethod(m) === 'ton';
-        const isPerYard = (m) => normalizeMethod(m) === 'yard';
-        const isFlat = (m) => normalizeMethod(m) === 'flat' || normalizeMethod(m) === 'fee';
-        const isDelivered = (m) => normalizeMethod(m) === 'delivered';
-        
-        if (customer && customer.freightMethod && !isDelivered(customer.freightMethod)) {
-          const freightCostPerUnit = parseFloat(customer.freightCost) || 0;
-          const freightRatePerUnit = parseFloat(customer.freightRate) || 0;
-          
-          // Calculate CHARGE (what customer pays) using freightMethod
-          if (isPerTon(customer.freightMethod)) {
-            freightChargeTotal = freightRatePerUnit * netTons;
-          } else if (isPerYard(customer.freightMethod)) {
-            freightChargeTotal = freightRatePerUnit * netYards;
-          } else if (isFlat(customer.freightMethod)) {
-            freightChargeTotal = freightRatePerUnit;
-          }
-          
-          // Calculate COST (what we pay truck) using freightCostMethod (falls back to freightMethod if not set)
-          const costMethod = customer.freightCostMethod || customer.freightMethod;
-          if (isPerTon(costMethod)) {
-            freightCostTotal = freightCostPerUnit * netTons;
-          } else if (isPerYard(costMethod)) {
-            freightCostTotal = freightCostPerUnit * netYards;
-          } else if (isFlat(costMethod)) {
-            freightCostTotal = freightCostPerUnit;
-          }
-          
-          console.log(`Freight calculated: ChargeMethod=${customer.freightMethod}, CostMethod=${costMethod}, Tons=${netTons.toFixed(2)}, Yards=${netYards.toFixed(2)}, Cost=$${freightCostTotal.toFixed(2)}, Charge=$${freightChargeTotal.toFixed(2)}`);
-        }
-        
-        // Allow manual override from freight fields if user entered values
-        // Fields are empty by default, so any value means user entered it
-        const manualCost = parseFloat(document.getElementById('ticket-freight-cost')?.value) || 0;
-        const manualCharge = parseFloat(document.getElementById('ticket-freight-charge')?.value) || 0;
-        
-        if (manualCharge > 0) {
-          freightChargeTotal = manualCharge;
-          console.log(`Using manual freight charge: $${manualCharge}`);
-        }
-        if (manualCost > 0) {
-          freightCostTotal = manualCost;
-          console.log(`Using manual freight cost: $${manualCost}`);
-        }
-        
-        // v2.1: Calculate Pumice Charge (product charge) based on customer pricing
-        // This ensures customer-specific pricing is used instead of relying on Airtable formulas
-        let pumiceCharge = 0;
-        let pricePerUnit = 0;
-        let pricingMethod = '';
-        
-        if (customer) {
-          pricingMethod = (customer.pricingMethod || '').toLowerCase();
-          const billByTon = pricingMethod.includes('ton');
-          
-          if (billByTon && customer.priceTon) {
-            pricePerUnit = parseFloat(customer.priceTon) || 0;
-            pumiceCharge = netTons * pricePerUnit;
-            console.log(`Pumice Charge (Per Ton): ${netTons.toFixed(2)} tons × $${pricePerUnit}/ton = $${pumiceCharge.toFixed(2)}`);
-          } else if (customer.priceYard) {
-            pricePerUnit = parseFloat(customer.priceYard) || 0;
-            pumiceCharge = netYards * pricePerUnit;
-            console.log(`Pumice Charge (Per Yard): ${netYards.toFixed(2)} yards × $${pricePerUnit}/yard = $${pumiceCharge.toFixed(2)}`);
-          } else {
-            // Fallback to $13/yard default if no customer pricing set
-            pricePerUnit = 13;
-            pumiceCharge = netYards * pricePerUnit;
-            console.warn(`⚠️ No customer pricing found, using default: ${netYards.toFixed(2)} yards × $13/yard = $${pumiceCharge.toFixed(2)}`);
-          }
-        } else {
-          // No customer selected - use default
-          pricePerUnit = 13;
-          pumiceCharge = netYards * pricePerUnit;
-          console.warn(`⚠️ No customer selected, using default: $${pumiceCharge.toFixed(2)}`);
-        }
-        
-        // Round to 2 decimal places
-        pumiceCharge = Math.round(pumiceCharge * 100) / 100;
-        
         const ticketData = {
           customerId: customerSelect.selectedOptions[0]?.dataset.airtableid || customerSelect.value,
           carrierId: carrierSelect.selectedOptions[0]?.dataset.airtableid || carrierSelect.value,
           truck: truckInput.value.trim(), // Truck is now a text field
           productId: productSelect.selectedOptions[0]?.dataset.airtableid || productSelect.value,
-          gross: gross,
-          tare: tare,
+          gross: parseInt(document.getElementById('ticket-gross').value) || 0,
+          tare: parseInt(document.getElementById('ticket-tare').value) || 0,
           po: document.getElementById('ticket-po').value || '',
-          note: document.getElementById('ticket-note').value || '',
-          customerNote: customerDefaultNote, // Customer's default note
-          freightCost: freightCostTotal,
-          freightCharge: freightChargeTotal,
-          // v2.1: Send calculated pricing to Airtable instead of relying on formulas
-          pumiceCharge: pumiceCharge,
-          pricePerUnit: pricePerUnit,
-          pricingMethod: customer?.pricingMethod || 'Per Yard'
+          note: document.getElementById('ticket-note').value || ''
         };
         
         // Call API to create ticket in Airtable
@@ -5084,12 +3482,9 @@ Beaver Pumice • Chemult, Oregon
         }
         
         const result = await response.json();
-
-        // v2.2-HOTFIX: Use complete ticket data from API response
-        // API now returns the full ticket with calculated values from Airtable
-        // This prevents intermittent print issues where values were different
-        const newTicket = result.ticket || {
-          // Fallback to constructed ticket if API doesn't return full data (old version)
+        
+        // Create local ticket object with data from API response
+        const newTicket = {
           id: result.id,
           airtableId: result.id,
           number: result.ticketNumber || (tickets.length > 0 ? Math.max(...tickets.map(t => t.number)) + 1 : 4744),
@@ -5097,60 +3492,19 @@ Beaver Pumice • Chemult, Oregon
           customerId: ticketData.customerId,
           carrier: carrierSelect.selectedOptions[0]?.text || '',
           carrierId: ticketData.carrierId,
-          truck: truckInput.value.trim(),
+          truck: truckInput.value.trim(), // Truck is now a text field
           product: productSelect.selectedOptions[0]?.text || '',
           productId: ticketData.productId,
           gross: ticketData.gross,
           tare: ticketData.tare,
           po: ticketData.po,
           note: ticketData.note,
-          customerNote: ticketData.customerNote,
-          freightCost: ticketData.freightCost,
-          freightCharge: ticketData.freightCharge,
-          freightMargin: ticketData.freightCharge - ticketData.freightCost,
-          date: new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }),
+          date: new Date().toLocaleString(),
           printUrl: result.printUrl
         };
-
+        
         tickets.unshift(newTicket);
         lastCreatedTicket = newTicket;
-
-        console.log('✅ Ticket created with verified values from Airtable:', {
-          number: newTicket.number,
-          netTons: newTicket.netTons,
-          netYards: newTicket.netYards,
-          pumiceCharge: newTicket.pumiceCharge,
-          freightCharge: newTicket.freightCharge
-        });
-        
-        // Try to send email notification (non-blocking)
-        // v70: Use email OR contactEmail - whichever has a value
-        // v2.2-HOTFIX: Don't send emails for voided tickets
-        try {
-          const customer = CUSTOMERS.find(c =>
-            c.airtableId === ticketData.customerId || c.id === ticketData.customerId
-          );
-          const customerEmail = customer?.contactEmail || customer?.email || customer?.billToEmail;
-          const ticketStatus = newTicket.status || 'Open';
-
-          // Don't send email if ticket is voided
-          if (ticketStatus === 'Void') {
-            console.log('Email not sent: Ticket is voided');
-          } else if (customer && customer.emailReceipts && customerEmail) {
-            console.log('Sending ticket email to:', customerEmail);
-            sendTicketEmail(newTicket.id, newTicket, customer, customerEmail).then(result => {
-              if (result.sent) {
-                console.log('Email sent successfully');
-              } else {
-                console.log('Email not sent:', result.reason);
-              }
-            }).catch(err => console.error('Email error:', err));
-          } else {
-            console.log('Email not sent:', !customer ? 'no customer' : !customer.emailReceipts ? 'Email Receipts not enabled' : 'no email address');
-          }
-        } catch (emailError) {
-          console.error('Email setup error (non-fatal):', emailError);
-        }
         
         updateStats();
         renderRecentActivity();
@@ -5161,27 +3515,11 @@ Beaver Pumice • Chemult, Oregon
         
         this.reset();
         document.getElementById('calculations').classList.add('hidden');
-        document.getElementById('customer-default-note-container').classList.add('hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
       } catch (error) {
         console.error('Error creating ticket:', error);
-        
-        // Show more detailed error info
-        let errorMsg = error.message || 'Unknown error';
-        if (error.message.includes('Failed to fetch')) {
-          errorMsg = 'Network error - check internet connection';
-        } else if (error.message.includes('Airtable')) {
-          errorMsg = error.message; // Show Airtable-specific error
-        }
-        
-        showToast('Failed to create ticket: ' + errorMsg, 'error');
-        
-        // Log to console for debugging
-        console.error('Full error details:', {
-          message: error.message,
-          stack: error.stack
-        });
+        showToast('Failed to create ticket: ' + error.message, 'error');
       } finally {
         // Reset button state
         submitBtn.disabled = false;
@@ -5522,7 +3860,7 @@ Beaver Pumice • Chemult, Oregon
       container.innerHTML = `
         <div class="mb-6">
           <h3 class="text-lg font-bold text-slate-900 mb-4">Ticket Detail Report</h3>
-          <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div class="bg-gold-50 rounded-xl p-4 border border-gold-200">
               <p class="text-sm text-gold-700 font-medium">Total Tickets</p>
               <p class="text-2xl font-bold text-gold-900">${summary.totalTickets.toLocaleString()}</p>
@@ -5534,17 +3872,6 @@ Beaver Pumice • Chemult, Oregon
             <div class="bg-blue-50 rounded-xl p-4 border border-blue-200">
               <p class="text-sm text-blue-700 font-medium">Total Yards</p>
               <p class="text-2xl font-bold text-blue-900">${summary.totalYards.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
-            </div>
-            <div class="bg-green-50 rounded-xl p-4 border border-green-200 amount-column">
-              <p class="text-sm text-green-700 font-medium">Total $ Amount</p>
-              <p class="text-2xl font-bold text-green-900">$${(() => {
-                let total = 0;
-                rptTickets.forEach(t => {
-                  // v69: Use calcAmount for correct per-ton vs per-yard billing
-                  total += calcAmount(t);
-                });
-                return total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-              })()}</p>
             </div>
             <div class="bg-purple-50 rounded-xl p-4 border border-purple-200">
               <p class="text-sm text-purple-700 font-medium">Net Weight</p>
@@ -5567,15 +3894,11 @@ Beaver Pumice • Chemult, Oregon
                 <th class="px-3 py-2 font-semibold text-slate-700">Product</th>
                 <th class="px-3 py-2 font-semibold text-slate-700 text-right">Tons</th>
                 <th class="px-3 py-2 font-semibold text-slate-700 text-right">Yards</th>
-                <th class="px-3 py-2 font-semibold text-slate-700 text-right amount-column">$ Amount</th>
                 <th class="px-3 py-2 font-semibold text-slate-700">Status</th>
               </tr>
             </thead>
             <tbody>
-              ${rptTickets.map(t => {
-                // v69: Use calcAmount for correct per-ton vs per-yard billing
-                const amount = calcAmount(t).toFixed(2);
-                return `
+              ${rptTickets.map(t => `
                 <tr class="border-b border-slate-100 hover:bg-slate-50">
                   <td class="px-3 py-2">
                     <input type="checkbox" class="ticket-checkbox rounded" value="${t.id}" 
@@ -5589,12 +3912,11 @@ Beaver Pumice • Chemult, Oregon
                   <td class="px-3 py-2">${escapeHtmlReport(t.product)}</td>
                   <td class="px-3 py-2 text-right font-mono">${t.netTons.toFixed(2)}</td>
                   <td class="px-3 py-2 text-right font-mono">${t.netYards.toFixed(2)}</td>
-                  <td class="px-3 py-2 text-right font-mono font-bold text-emerald-600 amount-column">$${parseFloat(amount).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
                   <td class="px-3 py-2">
-                    <span class="px-2 py-1 rounded-full text-xs font-medium ${getReportStatusClass(t.status === 'Closed' && t.exportedToQB ? 'Exported' : t.status)}">${t.status === 'Closed' && t.exportedToQB ? 'Exported' : t.status}</span>
+                    <span class="px-2 py-1 rounded-full text-xs font-medium ${getReportStatusClass(t.status)}">${t.status}</span>
                   </td>
                 </tr>
-              `}).join('')}
+              `).join('')}
             </tbody>
           </table>
         </div>
@@ -5623,60 +3945,28 @@ Beaver Pumice • Chemult, Oregon
                 <th class="px-4 py-3 font-semibold text-slate-700 text-right">Loads</th>
                 <th class="px-4 py-3 font-semibold text-slate-700 text-right">Total Tons</th>
                 <th class="px-4 py-3 font-semibold text-slate-700 text-right">Total Yards</th>
-                <th class="px-4 py-3 font-semibold text-slate-700 text-right amount-column">$ Amount</th>
                 <th class="px-4 py-3 font-semibold text-slate-700 text-right">Avg Tons/Load</th>
               </tr>
             </thead>
             <tbody>
-              ${customers.map(([name, data]) => {
-                const customer = CUSTOMERS.find(c => c.name === name);
-                // v69: Check pricing method - use tons or yards accordingly
-                const method = (customer?.pricingMethod || '').toLowerCase();
-                const billByTon = method.includes('ton') || (customer?.priceTon && !customer?.priceYard);
-                let amount;
-                if (billByTon && customer?.priceTon) {
-                  amount = (data.totalTons * customer.priceTon).toFixed(2);
-                } else {
-                  const priceYard = customer?.priceYard || 13;
-                  amount = (data.totalYards * priceYard).toFixed(2);
-                }
-                return `
+              ${customers.map(([name, data]) => `
                 <tr class="border-b border-slate-100 hover:bg-slate-50">
                   <td class="px-4 py-3 font-medium">${escapeHtmlReport(name)}</td>
                   <td class="px-4 py-3 text-right font-mono">${data.ticketCount}</td>
                   <td class="px-4 py-3 text-right font-mono font-semibold text-emerald-700">${data.totalTons.toFixed(2)}</td>
                   <td class="px-4 py-3 text-right font-mono text-blue-700">${data.totalYards.toFixed(2)}</td>
-                  <td class="px-4 py-3 text-right font-mono font-bold text-emerald-600 amount-column">$${parseFloat(amount).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
                   <td class="px-4 py-3 text-right font-mono text-slate-600">${(data.totalTons / data.ticketCount).toFixed(2)}</td>
                 </tr>
-              `}).join('')}
+              `).join('')}
             </tbody>
             <tfoot>
-              ${(() => {
-                // v69: Calculate total $ amount using correct pricing method per customer
-                let totalAmount = 0;
-                customers.forEach(([name, data]) => {
-                  const customer = CUSTOMERS.find(c => c.name === name);
-                  const method = (customer?.pricingMethod || '').toLowerCase();
-                  const billByTon = method.includes('ton') || (customer?.priceTon && !customer?.priceYard);
-                  if (billByTon && customer?.priceTon) {
-                    totalAmount += data.totalTons * customer.priceTon;
-                  } else {
-                    const priceYard = customer?.priceYard || 13;
-                    totalAmount += data.totalYards * priceYard;
-                  }
-                });
-                return `
               <tr class="bg-slate-50 font-semibold">
                 <td class="px-4 py-3">TOTAL</td>
                 <td class="px-4 py-3 text-right font-mono">${reportData.summary.totalTickets}</td>
                 <td class="px-4 py-3 text-right font-mono text-emerald-700">${reportData.summary.totalTons.toFixed(2)}</td>
                 <td class="px-4 py-3 text-right font-mono text-blue-700">${reportData.summary.totalYards.toFixed(2)}</td>
-                <td class="px-4 py-3 text-right font-mono font-bold text-emerald-600 amount-column">$${totalAmount.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
                 <td class="px-4 py-3 text-right font-mono text-slate-600">${(reportData.summary.totalTons / reportData.summary.totalTickets).toFixed(2)}</td>
               </tr>
-              `;
-              })()}
             </tfoot>
           </table>
         </div>
@@ -5870,17 +4160,6 @@ Beaver Pumice • Chemult, Oregon
               exportDate: new Date().toISOString()
             })
           });
-          
-          // Update local tickets array to show Exported status immediately
-          const exportedIds = new Set(selectedTicketsForExport);
-          tickets.forEach(t => {
-            if (exportedIds.has(t.id)) {
-              t.exportedToQB = true;
-            }
-          });
-          // Refresh the main tickets table to show "Exported" badge
-          renderTicketsTable();
-          renderRecentActivity();
         }
         
         showToast(`Exported ${selectedTicketsForExport.size} tickets to QuickBooks IIF!`);
@@ -5926,7 +4205,7 @@ Beaver Pumice • Chemult, Oregon
               ${reportFilters.startDate ? `From: ${reportFilters.startDate}` : 'All Time'}
               ${reportFilters.endDate ? ` To: ${reportFilters.endDate}` : ''}
             </p>
-            <p style="color: #999; font-size: 11px;">Generated: ${new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })}</p>
+            <p style="color: #999; font-size: 11px;">Generated: ${new Date().toLocaleString()}</p>
           </div>
           ${reportContent.innerHTML}
         </div>
@@ -6003,7 +4282,7 @@ Beaver Pumice • Chemult, Oregon
     function formatReportDate(dateStr) {
       if (!dateStr) return '';
       const d = new Date(dateStr);
-      return d.toLocaleDateString('en-US', { timeZone: 'America/Los_Angeles', month: 'short', day: 'numeric', year: 'numeric' });
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     }
 
     function getReportStatusClass(status) {
@@ -6026,8 +4305,6 @@ Beaver Pumice • Chemult, Oregon
       populateReportFilters();
       setReportDateRange('thisMonth');
       await applyReportFilters();
-      // Initialize the auto-export panel for admins
-      await initAutoExportPanel();
     }
 
     function populateReportFilters() {
@@ -6056,232 +4333,11 @@ Beaver Pumice • Chemult, Oregon
       }
     }
 
-    // ==================== AUTOMATED QB EXPORT ====================
-    
-    let pendingExportCount = 0;
-    
-    async function initAutoExportPanel() {
-      const panel = document.getElementById('auto-export-panel');
-      if (!panel) return;
-      
-      // Show for admin AND finance roles (Jesse needs to trigger exports)
-      if (currentUser?.role === 'admin' || currentUser?.role === 'finance') {
-        panel.classList.remove('hidden');
-        await refreshPendingCount();
-      } else {
-        panel.classList.add('hidden');
-      }
-    }
-    
-    async function refreshPendingCount() {
-      const countEl = document.getElementById('pending-export-count');
-      const btn = document.getElementById('export-now-btn');
-      
-      if (!countEl) return;
-      
-      countEl.textContent = '...';
-      
-      try {
-        const response = await fetch('/api/trigger-qb-export', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ dryRun: true })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-          pendingExportCount = data.ticketsFound || 0;
-          countEl.textContent = pendingExportCount;
-          
-          if (btn) {
-            btn.disabled = pendingExportCount === 0;
-          }
-        } else if (data.message && data.message.includes('No pending')) {
-          pendingExportCount = 0;
-          countEl.textContent = '0';
-          if (btn) btn.disabled = true;
-        } else {
-          countEl.textContent = '?';
-          console.error('Failed to get pending count:', data.error);
-        }
-      } catch (error) {
-        console.error('Error fetching pending count:', error);
-        countEl.textContent = '?';
-      }
-    }
-    
-    async function triggerManualExport() {
-      if (pendingExportCount === 0) {
-        showToast('No pending tickets to export', 'info');
-        return;
-      }
-      
-      const confirmMsg = `Export ${pendingExportCount} ticket(s) to QuickBooks?\n\nThis will:\n• Generate an IIF file\n• Email it to accounting@beaverpumice.com\n• Mark tickets as exported\n\nContinue?`;
-      
-      if (!confirm(confirmMsg)) return;
-      
-      const btn = document.getElementById('export-now-btn');
-      const progress = document.getElementById('export-progress');
-      const progressText = document.getElementById('export-progress-text');
-      const progressDetail = document.getElementById('export-progress-detail');
-      
-      if (btn) btn.disabled = true;
-      if (progress) progress.classList.remove('hidden');
-      if (progressText) progressText.textContent = 'Generating IIF file...';
-      if (progressDetail) progressDetail.textContent = `Processing ${pendingExportCount} tickets`;
-      
-      try {
-        const response = await fetch('/api/trigger-qb-export', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({})
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-          if (progressText) progressText.textContent = '✅ Export complete!';
-          if (progressDetail) progressDetail.textContent = `${data.ticketsExported} tickets in ${data.invoicesGenerated} invoice(s) emailed to ${data.emailSentTo}`;
-          
-          showToast(`Exported ${data.ticketsExported} tickets to QuickBooks!`, 'success');
-          
-          const lastExportInfo = document.getElementById('last-export-info');
-          const lastExportDate = document.getElementById('last-export-date');
-          
-          if (lastExportInfo) lastExportInfo.classList.remove('hidden');
-          if (lastExportDate) lastExportDate.textContent = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' });
-          
-          setTimeout(async () => {
-            if (progress) progress.classList.add('hidden');
-            await refreshPendingCount();
-            if (typeof applyReportFilters === 'function') {
-              await applyReportFilters();
-            }
-          }, 3000);
-          
-        } else {
-          throw new Error(data.error || 'Export failed');
-        }
-        
-      } catch (error) {
-        console.error('Export error:', error);
-        if (progressText) progressText.textContent = '❌ Export failed';
-        if (progressDetail) progressDetail.textContent = error.message;
-        showToast('Export failed: ' + error.message, 'error');
-        
-        setTimeout(() => {
-          if (progress) progress.classList.add('hidden');
-          if (btn) btn.disabled = pendingExportCount === 0;
-        }, 3000);
-      }
-    }
-
     console.log('Phase 2 Reports & QuickBooks Export module loaded');
 
     // Start the app
     init();
   </script>
-
-  <!-- Floating Help Button -->
-  <div id="help-fab" class="fixed bottom-6 right-6 z-50">
-    <div id="help-menu" class="hidden absolute bottom-16 right-0 bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden w-64 mb-2">
-      <div class="bg-slate-800 text-white px-4 py-3">
-        <h3 class="font-bold">Need Help?</h3>
-      </div>
-      <div class="p-2">
-        <!-- Operator Links (shown to everyone) -->
-        <a href="operator-guide.html" class="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 rounded-lg transition-all">
-          <span class="text-xl">👷</span>
-          <div>
-            <div class="font-semibold text-slate-800">Operator Guide</div>
-            <div class="text-xs text-slate-500">How to create tickets</div>
-          </div>
-        </a>
-        
-        <!-- Admin Links (hidden for operators) -->
-        <a href="training.html" id="help-admin-training" class="hidden flex items-center gap-3 px-4 py-3 hover:bg-slate-50 rounded-lg transition-all">
-          <span class="text-xl">👑</span>
-          <div>
-            <div class="font-semibold text-slate-800">Admin Guide</div>
-            <div class="text-xs text-slate-500">Reports, QuickBooks, settings</div>
-          </div>
-        </a>
-        <a href="test-dashboard.html" id="help-admin-diagnostics" class="hidden flex items-center gap-3 px-4 py-3 hover:bg-slate-50 rounded-lg transition-all">
-          <span class="text-xl">🧪</span>
-          <div>
-            <div class="font-semibold text-slate-800">System Diagnostics</div>
-            <div class="text-xs text-slate-500">Test all connections</div>
-          </div>
-        </a>
-        
-        <hr class="my-2">
-        <a href="mailto:support@resultantai.com?subject=Beaver%20Pumice%20Support%20Request" class="flex items-center gap-3 px-4 py-3 hover:bg-amber-50 rounded-lg transition-all">
-          <span class="text-xl">📧</span>
-          <div>
-            <div class="font-semibold text-amber-700">Contact Support</div>
-            <div class="text-xs text-slate-500">support@resultantai.com</div>
-          </div>
-        </a>
-      </div>
-    </div>
-    <button onclick="toggleHelpMenu()" class="bg-slate-800 hover:bg-slate-700 text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center text-2xl transition-all hover:scale-110">
-      <span id="help-icon">❓</span>
-    </button>
-  </div>
-  
-  <script>
-    function toggleHelpMenu() {
-      const menu = document.getElementById('help-menu');
-      const icon = document.getElementById('help-icon');
-      menu.classList.toggle('hidden');
-      icon.textContent = menu.classList.contains('hidden') ? '❓' : '✕';
-      
-      // Show/hide admin links based on user role
-      const isAdmin = currentUser && currentUser.role === 'admin';
-      document.getElementById('help-admin-training').classList.toggle('hidden', !isAdmin);
-      document.getElementById('help-admin-diagnostics').classList.toggle('hidden', !isAdmin);
-    }
-    // Close menu when clicking outside
-    document.addEventListener('click', function(e) {
-      const fab = document.getElementById('help-fab');
-      if (!fab.contains(e.target)) {
-        document.getElementById('help-menu').classList.add('hidden');
-        document.getElementById('help-icon').textContent = '❓';
-      }
-    });
-  </script>
-
-  <!-- Scale Integration -->
-  <script src="js/scale-integration.js"></script>
-  <script>
-    // Initialize scale integration when page loads
-    document.addEventListener('DOMContentLoaded', function() {
-      if (typeof initScaleIntegration === 'function') {
-        initScaleIntegration();
-        // Try to auto-reconnect to previously paired scale
-        if (typeof autoReconnectScale === 'function') {
-          autoReconnectScale();
-        }
-      }
-    });
-  </script>
-
-  <!-- Pricing Admin -->
-  <script src="js/pricing-admin.js"></script>
-  
-  <!-- Email Integration -->
-  <script src="js/email-integration.js"></script>
-  
-  <style>
-    .pricing-tab.active {
-      color: #d4a921;
-      border-bottom-color: #d4a921;
-    }
-    .pricing-row:hover {
-      background-color: #f9fafb;
-    }
-  </style>
 
 </body>
 </html>
