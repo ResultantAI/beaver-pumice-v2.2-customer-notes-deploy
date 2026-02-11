@@ -332,6 +332,23 @@ exports.handler = async (event, context) => {
                 emailTo = customerEmail;
 
                 // Build ticket data for email - using fullTicketRecord to get all formula fields
+                const grossWeight = fullTicketRecord.fields['Gross Weight lbs'] || 0;
+                const tareWeight = fullTicketRecord.fields['Tare Weight lbs'] || 0;
+                const netWeight = fullTicketRecord.fields['Net Weight lbs'] || (grossWeight - tareWeight);
+                const netTons = fullTicketRecord.fields['Net Tons'] || (netWeight / 2000);
+
+                // v2.2-HOTFIX: Calculate netYards if Airtable formula doesn't provide it
+                // This fixes Grant's 0.00 CY issue
+                let netYards = fullTicketRecord.fields['Net Yards'] || 0;
+
+                if (!netYards || netYards === 0) {
+                  console.warn('⚠️ Net Yards missing from Airtable formula, calculating fallback');
+                  // Default lbs/yard if product lookup fails (3/8 x minus = 1350 lbs/yard)
+                  const lbsPerYard = 1350;
+                  netYards = netWeight / lbsPerYard;
+                  console.log(`📐 Calculated netYards: ${netWeight} lbs ÷ ${lbsPerYard} lbs/yd = ${netYards.toFixed(2)} yards`);
+                }
+
                 const ticketData = {
                   ticketNumber: fullTicketRecord.fields['Ticket Number'],
                   date: fullTicketRecord.fields['Created'] || new Date().toISOString(),
@@ -339,11 +356,11 @@ exports.handler = async (event, context) => {
                   productName: fullTicketRecord.fields['Product Name'] ? fullTicketRecord.fields['Product Name'][0] : 'N/A',
                   carrierName: fullTicketRecord.fields['Hauling For Name'] ? fullTicketRecord.fields['Hauling For Name'][0] : '',
                   truckId: fullTicketRecord.fields['Truck Text'] || (fullTicketRecord.fields['Truck Name'] ? fullTicketRecord.fields['Truck Name'][0] : ''),
-                  grossWeight: fullTicketRecord.fields['Gross Weight lbs'] || 0,
-                  tareWeight: fullTicketRecord.fields['Tare Weight lbs'] || 0,
-                  netWeight: fullTicketRecord.fields['Net Weight lbs'] || 0,
-                  netTons: fullTicketRecord.fields['Net Tons'] || 0,
-                  netYards: fullTicketRecord.fields['Net Yards'] || 0,  // FIX: Now reads from complete record
+                  grossWeight: grossWeight,
+                  tareWeight: tareWeight,
+                  netWeight: netWeight,
+                  netTons: netTons,
+                  netYards: netYards,  // v2.2-HOTFIX: Calculated or from Airtable
                   notes: fullTicketRecord.fields['Ticket Note'] || ''
                 };
 

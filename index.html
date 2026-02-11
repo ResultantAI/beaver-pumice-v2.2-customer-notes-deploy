@@ -4585,7 +4585,78 @@ Beaver Pumice • Chemult, Oregon
         showToast('Ticket details copied to clipboard!');
       });
     }
-    
+
+    // v2.2-HOTFIX: Auto-send ticket email on creation (if customer has auto-email enabled)
+    async function sendTicketEmail(ticketId, ticket, customer, recipientEmail) {
+      console.log('sendTicketEmail called:', { ticketId, ticketNumber: ticket.number, recipientEmail });
+
+      try {
+        const netWeight = ticket.netLbs || ((ticket.gross || 0) - (ticket.tare || 0));
+        const netTons = ticket.netTons || (netWeight / 2000);
+
+        // v2.2-HOTFIX: Calculate netYards if Airtable didn't provide it
+        // This fixes the 0.00 CY issue Grant reported
+        let netYards = ticket.netYards || 0;
+
+        if (!netYards || netYards === 0) {
+          console.warn('⚠️ netYards missing from Airtable, calculating fallback');
+          // Get product to find lbs/yard conversion
+          const product = PRODUCTS.find(p =>
+            p.id === ticket.productId ||
+            p.airtableId === ticket.productId ||
+            p.name === ticket.product
+          );
+          const lbsPerYard = (product && product.lbsPerYard > 0) ? product.lbsPerYard : 1350;
+          netYards = netWeight / lbsPerYard;
+          console.log(`📐 Calculated netYards: ${netWeight} lbs ÷ ${lbsPerYard} lbs/yd = ${netYards.toFixed(2)} yards`);
+        }
+
+        // Prepare ticket data for email - use data from Airtable (already calculated)
+        const ticketData = {
+          ticketNumber: ticket.number,
+          date: ticket.date || new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }),
+          time: '',
+          customerName: ticket.customer || customer?.name || '',
+          productName: ticket.product || '',
+          grossWeight: ticket.gross || 0,
+          tareWeight: ticket.tare || 0,
+          netWeight: netWeight,
+          netTons: netTons,
+          netYards: netYards,  // v2.2-HOTFIX: Use calculated or Airtable value
+          carrierName: ticket.carrier || '',
+          truckId: ticket.truck || '',
+          notes: ticket.note || ticket.customerNote || ''
+        };
+
+        console.log('📧 Email ticket data:', ticketData);
+        console.log('✅ netYards for email:', ticketData.netYards.toFixed(2), 'CY');
+
+        // Call email API
+        const response = await fetch('/api/email/send-ticket', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ticket: ticketData,
+            customer: customer || {},
+            sendTo: recipientEmail
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          console.log(`✅ Email sent successfully to ${recipientEmail}`);
+          return { sent: true };
+        } else {
+          console.error('Email send failed:', data.error);
+          return { sent: false, reason: data.error || 'Unknown error' };
+        }
+      } catch (error) {
+        console.error('Email send exception:', error);
+        return { sent: false, reason: error.message };
+      }
+    }
+
     function hideSuccessBanner() { document.getElementById('success-banner').classList.add('hidden'); }
 
     // ==================== EDIT TICKET (Admin Only) ====================
