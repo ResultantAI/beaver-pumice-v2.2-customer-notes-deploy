@@ -47,30 +47,63 @@ exports.handler = async (event, context) => {
       'Notes': customer.notes?.trim() || ''
     };
     
+    let priceYardVal = null;
+    let priceTonVal = null;
+
     if (customer.priceYard !== null && customer.priceYard !== undefined && customer.priceYard !== '') {
       const priceYard = parseFloat(customer.priceYard);
-      if (!isNaN(priceYard)) fields['Price Yard'] = priceYard;
+      if (!isNaN(priceYard)) { fields['Price Yard'] = priceYard; priceYardVal = priceYard; }
     } else {
       fields['Price Yard'] = null;
     }
-    
+
     if (customer.priceTon !== null && customer.priceTon !== undefined && customer.priceTon !== '') {
       const priceTon = parseFloat(customer.priceTon);
-      if (!isNaN(priceTon)) fields['Price Ton'] = priceTon;
+      if (!isNaN(priceTon)) { fields['Price Ton'] = priceTon; priceTonVal = priceTon; }
     } else {
       fields['Price Ton'] = null;
     }
 
+    // Optional fields: Customer Rate + Customer Pricing Method
+    // These are the source fields for Airtable lookup fields on tickets.
+    const optionalFields = {};
+    const effectiveRate = priceYardVal || priceTonVal;
+    if (effectiveRate) {
+      optionalFields['Customer Rate'] = effectiveRate;
+      optionalFields['Customer Pricing Method'] = priceYardVal ? 'Per Yard' : 'Per Ton';
+    } else {
+      // Clear them if both prices were removed
+      optionalFields['Customer Rate'] = null;
+      optionalFields['Customer Pricing Method'] = null;
+    }
+
     const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${CUSTOMERS_TABLE_ID}/${id}`;
-    
-    const response = await fetch(url, {
+
+    let response = await fetch(url, {
       method: 'PATCH',
       headers: {
         'Authorization': `Bearer ${AIRTABLE_TOKEN}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ fields })
+      body: JSON.stringify({ fields: { ...fields, ...optionalFields } })
     });
+
+    // If optional fields caused a 422, retry with just core fields
+    if (!response.ok && response.status === 422) {
+      const errorData = await response.json();
+      const errorMsg = errorData.error?.message || '';
+      if (errorMsg.includes('Unknown field') || errorMsg.includes('Customer Rate') || errorMsg.includes('Customer Pricing Method')) {
+        console.warn('update-customer: retrying without optional fields:', errorMsg);
+        response = await fetch(url, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${AIRTABLE_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ fields })
+        });
+      }
+    }
 
     if (!response.ok) {
       const errorData = await response.json();
