@@ -2199,12 +2199,7 @@
         carrierSelect.innerHTML += `<option value="${c.name}" data-airtableid="${c.airtableId || c.id}">${c.name}</option>`;
       });
 
-      const truckSelect = document.getElementById('ticket-truck');
-      truckSelect.innerHTML = '<option value="">Select truck...</option>';
-      TRUCKS.forEach(t => {
-        const displayName = t.carrier ? `${t.truckId} (${t.carrier})` : t.truckId;
-        truckSelect.innerHTML += `<option value="${t.truckId}" data-airtableid="${t.airtableId || t.id}">${displayName}</option>`;
-      });
+      // ticket-truck is a free-text input field, not a select — no population needed
 
       const productSelect = document.getElementById('ticket-product');
       productSelect.innerHTML = '<option value="">Select product...</option>';
@@ -3394,7 +3389,11 @@ Beaver Pumice • Chemult, Oregon
         
         closeModal('edit-ticket-modal');
         renderTicketsTable();
-        showToast(`Ticket #${ticket.number} updated successfully!`);
+        if (result.truckWarning) {
+          showToast('Warning: ' + result.truckWarning, 'error');
+        } else {
+          showToast(`Ticket #${ticket.number} updated successfully!`);
+        }
         
       } catch (error) {
         console.error('Error updating ticket:', error);
@@ -3458,15 +3457,46 @@ Beaver Pumice • Chemult, Oregon
         const truckInput = document.getElementById('ticket-truck');
         const productSelect = document.getElementById('ticket-product');
         
+        const gross = parseInt(document.getElementById('ticket-gross').value) || 0;
+        const tare = parseInt(document.getElementById('ticket-tare').value) || 0;
+        const productName = productSelect.selectedOptions[0]?.text || '';
+
+        // Calculate pricing based on customer's rate (per yard or per ton)
+        const selectedCustomerId = customerSelect.selectedOptions[0]?.dataset.airtableid;
+        const selectedCustomer = CUSTOMERS.find(c => (c.airtableId || c.id) === selectedCustomerId);
+        const priceYard = selectedCustomer?.priceYard;
+        const priceTon = selectedCustomer?.priceTon;
+
+        let pumiceCharge = null;
+        let pricePerUnit = null;
+        let pricingMethod = null;
+
+        if (gross > 0 && tare > 0 && gross > tare) {
+          if (priceYard) {
+            const netYards = (gross - tare) / getProductWeight(productName);
+            pumiceCharge = isFinite(netYards) ? Math.round(netYards * priceYard * 100) / 100 : null;
+            pricePerUnit = priceYard;
+            pricingMethod = 'per_yard';
+          } else if (priceTon) {
+            const netTons = (gross - tare) / 2000;
+            pumiceCharge = Math.round(netTons * priceTon * 100) / 100;
+            pricePerUnit = priceTon;
+            pricingMethod = 'per_ton';
+          }
+        }
+
         const ticketData = {
           customerId: customerSelect.selectedOptions[0]?.dataset.airtableid || customerSelect.value,
           carrierId: carrierSelect.selectedOptions[0]?.dataset.airtableid || carrierSelect.value,
           truck: truckInput.value.trim(), // Truck is now a text field
           productId: productSelect.selectedOptions[0]?.dataset.airtableid || productSelect.value,
-          gross: parseInt(document.getElementById('ticket-gross').value) || 0,
-          tare: parseInt(document.getElementById('ticket-tare').value) || 0,
+          gross,
+          tare,
           po: document.getElementById('ticket-po').value || '',
-          note: document.getElementById('ticket-note').value || ''
+          note: document.getElementById('ticket-note').value || '',
+          pumiceCharge,
+          pricePerUnit,
+          pricingMethod,
         };
         
         // Call API to create ticket in Airtable
@@ -3512,7 +3542,12 @@ Beaver Pumice • Chemult, Oregon
         
         document.getElementById('new-ticket-number').textContent = newTicket.number;
         document.getElementById('success-banner').classList.remove('hidden');
-        
+
+        // Warn user if truck data could not be saved (Airtable field missing)
+        if (result.truckWarning) {
+          showToast('Warning: ' + result.truckWarning, 'error');
+        }
+
         this.reset();
         document.getElementById('calculations').classList.add('hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' });

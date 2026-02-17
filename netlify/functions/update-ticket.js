@@ -237,6 +237,10 @@ exports.handler = async (event, context) => {
           }
         } else {
           // Retry without optional fields
+          const truckWasDropped = !!optionalFields['Truck Text'];
+          if (truckWasDropped) {
+            console.warn('TRUCK DATA LOST on update: Airtable does not have a "Truck Text" field. Please add it to the Tickets table.');
+          }
           response = await fetch(url, {
             method: 'PATCH',
             headers: {
@@ -245,8 +249,23 @@ exports.handler = async (event, context) => {
             },
             body: JSON.stringify({ fields })
           });
+
+          if (response.ok && truckWasDropped) {
+            const record = await response.json();
+            return {
+              statusCode: 200,
+              headers,
+              body: JSON.stringify({
+                success: true,
+                truckWarning: 'Truck data could not be saved — the "Truck Text" field is missing from Airtable. Please contact your administrator.',
+                id: record.id,
+                ticketNumber: record.fields['Ticket Number'],
+                message: 'Ticket updated (truck data was not saved)'
+              })
+            };
+          }
         }
-        
+
         if (!response.ok) {
           const retryError = await response.json();
           console.error('Retry also failed:', retryError);

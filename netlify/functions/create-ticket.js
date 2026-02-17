@@ -188,8 +188,9 @@ exports.handler = async (event, context) => {
       
       // Check if error is about unknown field - retry without optional fields
       if (response.status === 422 && (errorMsg.includes('Unknown field') || errorMsg.includes('Truck Text') || errorMsg.includes('Customer Note'))) {
-        console.log('Retrying without optional fields...');
-        
+        const truckWasDropped = !!optionalFields['Truck Text'];
+        console.warn('Retrying without optional fields. Truck data will NOT be saved:', errorMsg);
+
         response = await fetch(url, {
           method: 'POST',
           headers: {
@@ -198,16 +199,39 @@ exports.handler = async (event, context) => {
           },
           body: JSON.stringify({ fields })
         });
-        
+
         if (!response.ok) {
           const retryError = await response.text();
           console.error('Retry also failed:', retryError);
           return {
             statusCode: response.status,
             headers,
-            body: JSON.stringify({ 
+            body: JSON.stringify({
               error: 'Failed to create ticket',
               details: retryError
+            })
+          };
+        }
+
+        // Flag that truck data was lost so frontend can warn the user
+        if (truckWasDropped) {
+          const record = await response.json();
+          console.error('TRUCK DATA LOST: Airtable does not have a "Truck Text" field. Please add it to the Tickets table.');
+          return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify({
+              success: true,
+              id: record.id,
+              ticketNumber: record.fields['Ticket Number'],
+              printUrl: `/ticket-viewer.html?id=${record.id}`,
+              truckWarning: 'Truck data could not be saved — the "Truck Text" field is missing from Airtable. Please contact your administrator.',
+              ticket: {
+                id: record.id,
+                airtableId: record.id,
+                number: record.fields['Ticket Number'] || 0,
+                truck: '',
+              }
             })
           };
         }
