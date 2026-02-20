@@ -3175,8 +3175,8 @@
         showToast('Ticket not found', 'error');
         return;
       }
-      // Use printUrl if available, otherwise construct from airtableId
-      const url = ticket.printUrl || `/ticket-viewer.html?id=${ticket.airtableId || ticket.id}`;
+      // Use printUrl if available, otherwise construct from airtableId using full viewer URL
+      const url = ticket.printUrl || `${CONFIG.PRINT_URL}/?id=${ticket.airtableId || ticket.id}`;
       console.log('printTicket opening:', url);
       window.open(url, '_blank');
     }
@@ -3193,7 +3193,7 @@
     function printTicketFromModal() { 
       console.log('printTicketFromModal called, currentTicket:', currentTicket);
       if (currentTicket) {
-        const url = currentTicket.printUrl || `/ticket-viewer.html?id=${currentTicket.airtableId || currentTicket.id}`;
+        const url = currentTicket.printUrl || `${CONFIG.PRINT_URL}/?id=${currentTicket.airtableId || currentTicket.id}`;
         window.open(url, '_blank');
       } else {
         showToast('No ticket selected', 'error');
@@ -3203,7 +3203,7 @@
     function printNewTicket() { 
       console.log('printNewTicket called, lastCreatedTicket:', lastCreatedTicket);
       if (lastCreatedTicket) {
-        const url = lastCreatedTicket.printUrl || `/ticket-viewer.html?id=${lastCreatedTicket.airtableId || lastCreatedTicket.id}`;
+        const url = lastCreatedTicket.printUrl || `${CONFIG.PRINT_URL}/?id=${lastCreatedTicket.airtableId || lastCreatedTicket.id}`;
         console.log('Opening print URL:', url);
         window.open(url, '_blank');
       } else {

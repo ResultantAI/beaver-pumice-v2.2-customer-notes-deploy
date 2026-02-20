@@ -1,0 +1,163 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# ==================== TICKET VIEWER ====================
+# Redirect /ticket-viewer.html to the external ticket viewer site
+[[redirects]]
+  from = "/ticket-viewer.html"
+  to = "https://beaver-pumice-ticket-viewer.netlify.app/"
+  status = 302
+  force = true
+
+# ==================== TICKETS ====================
+[[redirects]]
+  from = "/api/tickets"
+  to = "/.netlify/functions/get-tickets"
+  status = 200
+
+[[redirects]]
+  from = "/api/tickets/get"
+  to = "/.netlify/functions/get-ticket"
+  status = 200
+
+[[redirects]]
+  from = "/api/tickets/create"
+  to = "/.netlify/functions/create-ticket"
+  status = 200
+
+[[redirects]]
+  from = "/api/tickets/update"
+  to = "/.netlify/functions/update-ticket"
+  status = 200
+
+[[redirects]]
+  from = "/api/tickets/delete"
+  to = "/.netlify/functions/delete-ticket"
+  status = 200
+
+[[redirects]]
+  from = "/api/tickets/mark-exported"
+  to = "/.netlify/functions/mark-exported"
+  status = 200
+
+# ==================== CUSTOMERS ====================
+[[redirects]]
+  from = "/api/customers"
+  to = "/.netlify/functions/get-customers"
+  status = 200
+
+[[redirects]]
+  from = "/api/customers/add"
+  to = "/.netlify/functions/add-customer"
+  status = 200
+
+[[redirects]]
+  from = "/api/customers/update"
+  to = "/.netlify/functions/update-customer"
+  status = 200
+
+[[redirects]]
+  from = "/api/customers/delete"
+  to = "/.netlify/functions/delete-customer"
+  status = 200
+
+[[redirects]]
+  from = "/api/customers/import"
+  to = "/.netlify/functions/import-customers"
+  status = 200
+
+# ==================== CARRIERS ====================
+[[redirects]]
+  from = "/api/carriers"
+  to = "/.netlify/functions/get-carriers"
+  status = 200
+
+[[redirects]]
+  from = "/api/carriers/add"
+  to = "/.netlify/functions/add-carrier"
+  status = 200
+
+[[redirects]]
+  from = "/api/carriers/update"
+  to = "/.netlify/functions/update-carrier"
+  status = 200
+
+# ==================== TRUCKS ====================
+[[redirects]]
+  from = "/api/trucks"
+  to = "/.netlify/functions/get-trucks"
+  status = 200
+
+[[redirects]]
+  from = "/api/trucks/add"
+  to = "/.netlify/functions/add-truck"
+  status = 200
+
+# ==================== PRODUCTS ====================
+[[redirects]]
+  from = "/api/products"
+  to = "/.netlify/functions/get-products"
+  status = 200
+
+[[redirects]]
+  from = "/api/products/update"
+  to = "/.netlify/functions/update-product"
+  status = 200
+
+# ==================== REPORTS ====================
+[[redirects]]
+  from = "/api/reports/tickets"
+  to = "/.netlify/functions/get-report-data"
+  status = 200
+
+# ==================== QUICKBOOKS EXPORT ====================
+[[redirects]]
+  from = "/api/export/iif"
+  to = "/.netlify/functions/generate-iif"
+  status = 200
+
+[[redirects]]
+  from = "/api/export/trigger"
+  to = "/.netlify/functions/trigger-qb-export"
+  status = 200
+
+[[redirects]]
+  from = "/api/export/mark-exported"
+  to = "/.netlify/functions/mark-exported"
+  status = 200
+
+# ==================== EMAIL ====================
+[[redirects]]
+  from = "/api/email/send-ticket"
+  to = "/.netlify/functions/send-ticket-email"
+  status = 200
+
+# ==================== PRICING ====================
+[[redirects]]
+  from = "/api/pricing"
+  to = "/.netlify/functions/manage-pricing"
+  status = 200
+
+# ==================== DIAGNOSTIC ====================
+[[redirects]]
+  from = "/api/test"
+  to = "/.netlify/functions/test-connection"
+  status = 200
+
+# ==================== ENVIRONMENT VARIABLES ====================
+# Set these in Netlify Dashboard -> Site Settings -> Environment Variables
+#
+# REQUIRED:
+# AIRTABLE_TOKEN - Your Airtable Personal Access Token
+# AIRTABLE_BASE_ID - appZxvRMbFIHl63lH
+# AIRTABLE_TICKETS_TABLE_ID - Tickets (or table ID)
+# AIRTABLE_CUSTOMERS_TABLE_ID - tblAQKBdGWHeLz1WO
+#
+# EMAIL - Uses Resend.com:
+# RESEND_API_KEY - Get from https://resend.com/api-keys
+# FROM_EMAIL - tickets@beaverpumice.com
+# FROM_NAME - "Beaver Pumice"

@@ -224,7 +224,7 @@ exports.handler = async (event, context) => {
               success: true,
               id: record.id,
               ticketNumber: record.fields['Ticket Number'],
-              printUrl: `/ticket-viewer.html?id=${record.id}`,
+              printUrl: `https://beaver-pumice-ticket-viewer.netlify.app/?id=${record.id}`,
               truckWarning: 'Truck data could not be saved — the "Truck Text" field is missing from Airtable. Please contact your administrator.',
               ticket: {
                 id: record.id,
@@ -264,10 +264,11 @@ exports.handler = async (event, context) => {
     const record = await response.json();
     console.log('Ticket created successfully:', record.id);
 
-    // v2.2-HOTFIX: Wait briefly for Airtable formulas to calculate, then refetch
+    // v2.2-HOTFIX: Wait for Airtable formulas to calculate, then refetch
     // This prevents intermittent issues where print shows zero/wrong values
     // because formulas (Net Tons, Net Yards, etc.) haven't finished calculating
-    await new Promise(resolve => setTimeout(resolve, 800));
+    // Increased from 800ms to 3000ms to account for slower Airtable automation runs
+    await new Promise(resolve => setTimeout(resolve, 3000));
 
     // Refetch the complete record with all calculated fields
     const refetchUrl = `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TICKETS_TABLE)}/${record.id}`;
@@ -295,7 +296,7 @@ exports.handler = async (event, context) => {
         success: true,
         id: completeRecord.id,
         ticketNumber: completeRecord.fields['Ticket Number'],
-        printUrl: `/ticket-viewer.html?id=${completeRecord.id}`,
+        printUrl: `https://beaver-pumice-ticket-viewer.netlify.app/?id=${completeRecord.id}`,
         // Include all calculated field values for immediate use
         ticket: {
           id: completeRecord.id,
@@ -323,7 +324,7 @@ exports.handler = async (event, context) => {
           totalCharge: completeRecord.fields['Total Charge'] || 0,
           date: completeRecord.fields['Created'] ? new Date(completeRecord.fields['Created']).toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }) : '',
           status: completeRecord.fields['Status'] || 'Open',
-          printUrl: `/ticket-viewer.html?id=${completeRecord.id}`
+          printUrl: `https://beaver-pumice-ticket-viewer.netlify.app/?id=${completeRecord.id}`
         }
       })
     };
