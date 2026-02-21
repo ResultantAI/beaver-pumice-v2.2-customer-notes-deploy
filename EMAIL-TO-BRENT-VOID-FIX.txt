@@ -1,0 +1,47 @@
+Subject: Fixed: Voided Tickets No Longer Email Customers
+
+Hi Brent,
+
+Done! I've implemented the fix you requested – voided tickets will no longer send email notifications to customers. The fix is now live in production.
+
+WHAT CHANGED:
+The system now checks the ticket status before sending any email notifications. If a ticket is voided, the email is automatically skipped. This works in two scenarios:
+
+1. If someone creates a ticket and immediately voids it (within a second or two), the customer won't receive any email at all.
+
+2. If a ticket is voided after it's already been created, no additional "void notification" email is sent to the customer.
+
+HOW IT WORKS:
+- ✅ Voided tickets = NO email sent
+- ✅ Open/Closed tickets = Email sent (if customer has auto-email enabled)
+- ✅ Works on both ticket creation and status changes
+
+PRACTICAL EXAMPLE:
+Scenario 1 (Best case):
+- Operator creates ticket
+- Realizes it's wrong within a few seconds
+- Voids the ticket
+- ✅ Customer never receives any email
+
+Scenario 2 (Common case):
+- Operator creates ticket
+- Email is already sent to customer
+- Later, operator voids the ticket
+- ✅ No additional email sent (customer already got the first one)
+
+IMPORTANT NOTE:
+If an email was already sent before the ticket was voided, we can't "unsend" that email – the customer will have already received it. But they won't get any additional notifications about the void. The faster someone catches the mistake and voids it, the better chance the email won't have sent yet.
+
+NO WORKFLOW CHANGES:
+Your team doesn't need to do anything differently. Just keep using the Void status as you normally would, and the system will automatically handle the email logic.
+
+Let me know if you see any issues or have questions.
+
+Best,
+Chris
+
+---
+
+Chris Mott
+ResultantAI
+chris@resultantai.com
