@@ -40,7 +40,12 @@ exports.handler = async (event, context) => {
     if (customer.state) fields['State'] = customer.state.trim();
     if (customer.zip) fields['Zip'] = customer.zip.trim();
     if (customer.notes) fields['Notes'] = customer.notes.trim();
-    
+    // Explicit Pricing Method — used by IIF invoice export to determine per-yard vs per-ton billing
+    // Values must match Airtable single-select options exactly: 'Per Yard' or 'Per Ton'
+    if (customer.pricingMethod && (customer.pricingMethod === 'Per Yard' || customer.pricingMethod === 'Per Ton')) {
+      fields['Pricing Method'] = customer.pricingMethod;
+    }
+
     // Core pricing fields (Price Yard / Price Ton)
     let priceYardVal = null;
     let priceTonVal = null;

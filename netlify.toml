@@ -97,6 +97,11 @@
   to = "/.netlify/functions/add-truck"
   status = 200
 
+[[redirects]]
+  from = "/api/trucks/update"
+  to = "/.netlify/functions/update-truck"
+  status = 200
+
 # ==================== PRODUCTS ====================
 [[redirects]]
   from = "/api/products"

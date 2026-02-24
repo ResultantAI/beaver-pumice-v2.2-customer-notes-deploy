@@ -867,7 +867,7 @@
             <p class="text-slate-500 text-xs">92777 HWY 97 N • Chemult, Oregon 97731</p>
           </div>
         </div>
-        <p class="text-slate-500">Built by <span class="text-gold-400 font-medium">ResultantAI</span></p>
+        <p class="text-slate-500">v2.3 &nbsp;|&nbsp; Built by <span class="text-gold-400 font-medium">ResultantAI</span></p>
       </div>
     </footer>
 
@@ -1037,6 +1037,14 @@
             <label class="block text-sm font-semibold text-slate-700 mb-1">Price/Ton</label>
             <input type="number" name="priceTon" step="0.01" placeholder="$0.00" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
           </div>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Pricing Method <span class="text-slate-400 font-normal">(used for invoice export)</span></label>
+          <select name="pricingMethod" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
+            <option value="">-- Auto-detect from price --</option>
+            <option value="Per Yard">Per Yard</option>
+            <option value="Per Ton">Per Ton</option>
+          </select>
         </div>
         <div>
           <label class="block text-sm font-semibold text-slate-700 mb-1">Default Ticket Notes <span class="text-slate-400 font-normal">(will appear on all tickets for this customer)</span></label>
@@ -2590,6 +2598,7 @@
         zip: formData.get('zip') || '',
         priceYard: parseFloat(formData.get('priceYard')) || null,
         priceTon: parseFloat(formData.get('priceTon')) || null,
+        pricingMethod: formData.get('pricingMethod') || '',
         notes: formData.get('notes') || '',
       };
       
@@ -2933,46 +2942,85 @@
     function openEditTruckModal(truckId) {
       const truck = TRUCKS.find(t => t.id === truckId);
       if (!truck) return;
-      
-      document.getElementById('edit-truck-index').value = truck.id;
+
+      // Store Airtable record ID (string) — NOT parseInt
+      document.getElementById('edit-truck-index').value = truck.airtableId || truck.id;
       document.getElementById('edit-truck-id').value = truck.truckId;
-      
-      // Populate carrier dropdown
+
+      // Populate carrier dropdown using airtableId as value so the update API can link it
       const select = document.getElementById('edit-truck-carrier');
       select.innerHTML = '<option value="">-- Select Carrier --</option>';
       CARRIERS.forEach(c => {
-        select.innerHTML += `<option value="${c.name}" ${truck.carrier === c.name ? 'selected' : ''}>${c.name}</option>`;
+        const cId = c.airtableId || c.id;
+        const isSelected = truck.carrierId
+          ? truck.carrierId === cId
+          : truck.carrier === c.name;
+        select.innerHTML += `<option value="${cId}" ${isSelected ? 'selected' : ''}>${c.name}</option>`;
       });
-      
+
       openModal('edit-truck-modal');
     }
 
     // Note: add-truck-form handler is defined in API DATA LOADING section above
 
-    document.getElementById('edit-truck-form').addEventListener('submit', function(e) {
+    document.getElementById('edit-truck-form').addEventListener('submit', async function(e) {
       e.preventDefault();
       const formData = new FormData(this);
-      const truckId = parseInt(formData.get('truckIndex'));
-      const idx = TRUCKS.findIndex(t => t.id === truckId);
-      
-      if (idx !== -1) {
-        TRUCKS[idx].truckId = formData.get('truckId').trim();
-        TRUCKS[idx].carrier = formData.get('truckCarrier') || '';
-        
+      // Use string ID — parseInt breaks Airtable record IDs like 'recXXX'
+      const airtableId = formData.get('truckIndex');
+      const newTruckId = formData.get('truckId').trim();
+      const selectedCarrierId = formData.get('truckCarrier') || '';
+
+      // Find carrier name for local state
+      const selectedCarrier = CARRIERS.find(c => (c.airtableId || c.id) === selectedCarrierId);
+
+      const submitBtn = this.querySelector('[type="submit"]');
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Saving...'; }
+
+      try {
+        const response = await fetch('/api/trucks/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: airtableId,
+            truckId: newTruckId,
+            carrierId: selectedCarrierId
+          })
+        });
+
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          throw new Error(err.error || 'Failed to update truck');
+        }
+
+        // Update local array
+        const idx = TRUCKS.findIndex(t => (t.airtableId || t.id) === airtableId);
+        if (idx !== -1) {
+          TRUCKS[idx].truckId = newTruckId;
+          TRUCKS[idx].carrier = selectedCarrier?.name || '';
+          TRUCKS[idx].carrierId = selectedCarrierId || null;
+        }
+
         closeModal('edit-truck-modal');
         populateDropdowns();
         renderSettings();
-        showToast(`Truck "${TRUCKS[idx].truckId}" updated successfully!`);
+        showToast(`Truck "${newTruckId}" updated successfully!`);
+
+      } catch (error) {
+        console.error('Error updating truck:', error);
+        showToast('Failed to update truck: ' + error.message, 'error');
+      } finally {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Save'; }
       }
     });
 
     function confirmDeleteTruck() {
-      const truckId = parseInt(document.getElementById('edit-truck-index').value);
-      const truck = TRUCKS.find(t => t.id === truckId);
+      const airtableId = document.getElementById('edit-truck-index').value;
+      const truck = TRUCKS.find(t => (t.airtableId || t.id) === airtableId);
       if (!truck) return;
-      
+
       if (confirm(`Are you sure you want to delete "${truck.truckId}"?`)) {
-        const idx = TRUCKS.findIndex(t => t.id === truckId);
+        const idx = TRUCKS.findIndex(t => (t.airtableId || t.id) === airtableId);
         if (idx !== -1) {
           TRUCKS.splice(idx, 1);
           closeModal('edit-truck-modal');
