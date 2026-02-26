@@ -131,6 +131,11 @@ async function fetchTickets(token, baseId, ticketIds) {
         note: record.fields['Ticket Note'] || '',
         status: record.fields['Status'] || 'Open',
         date: record.fields['Created'] || '',
+        // Ticket-level rate fields - use these for billing (captures agreed rate at time of delivery)
+        // Customer Rate is a lookup array; take first element
+        customerRate: record.fields['Customer Rate']?.[0] || null,
+        customerPricingMethod: record.fields['Customer Pricing Method']?.[0] || null,
+        billableQty: record.fields['Billable Qty (Formula)'] || null,
         // Freight fields - parse currency format (remove $ and commas)
         freightCharge: parseFloat(String(record.fields['Freight Charge'] || '0').replace(/[$,]/g, '')) || 0,
         freightCost: parseFloat(String(record.fields['Freight Cost'] || '0').replace(/[$,]/g, '')) || 0,
@@ -425,55 +430,54 @@ function generateInvoiceLines(invoiceNum, invoiceDate, customer, tickets, produc
     const tons = ticket.netTons || 0;
     const yards = ticket.netYards || 0;
     
-    // v69: Enhanced billing logic with explicit customer data logging
-    console.log(`Ticket ${ticket.number}: Customer pricing data:`);
-    console.log(`  -> pricingMethod="${customer.pricingMethod}"`);
-    console.log(`  -> priceYard=${customer.priceYard}, priceTon=${customer.priceTon}`);
+    // v75: FIX - Use ticket-level rate and billing method (captures agreed rate at delivery time).
+    // Previously read from customer record (Price Yard / Price Ton) which caused wrong prices
+    // when the customer record didn't match the agreed ticket rate (e.g., Granite $39/yard vs $12 in record).
+    console.log(`Ticket ${ticket.number}: Billing data:`);
+    console.log(`  -> ticket.customerRate=${ticket.customerRate}, ticket.customerPricingMethod="${ticket.customerPricingMethod}"`);
+    console.log(`  -> customer.pricingMethod="${customer.pricingMethod}", customer.priceYard=${customer.priceYard}, customer.priceTon=${customer.priceTon}`);
     console.log(`  -> Ticket: ${tons.toFixed(4)} tons, ${yards.toFixed(4)} yards`);
-    
+
     // Determine billing method
-    // Priority: explicit pricingMethod > infer from which price is set > default to ton
+    // Priority: ticket's own method > customer record method > infer from price fields > default to ton
     let billByYard = false;
     let billingReason = '';
-    
-    if (customer.pricingMethod) {
-      // Explicit method set - check for 'yard' anywhere in string
+
+    const ticketMethod = (ticket.customerPricingMethod || '').toLowerCase();
+    if (ticketMethod) {
+      billByYard = ticketMethod.includes('yard');
+      billingReason = `ticket method "${ticket.customerPricingMethod}"`;
+    } else if (customer.pricingMethod) {
       const method = customer.pricingMethod.toLowerCase();
       billByYard = method.includes('yard');
-      billingReason = `explicit method "${customer.pricingMethod}"`;
+      billingReason = `customer method "${customer.pricingMethod}"`;
     } else if (customer.priceYard && !customer.priceTon) {
-      // Only yard price set
       billByYard = true;
-      billingReason = 'only priceYard is set';
+      billingReason = 'only priceYard is set on customer';
     } else if (customer.priceTon && !customer.priceYard) {
-      // Only ton price set
       billByYard = false;
-      billingReason = 'only priceTon is set';
-    } else if (customer.priceYard && customer.priceTon) {
-      // Both set - use ton unless method says yard
-      billByYard = false;
-      billingReason = 'both prices set, defaulting to ton';
+      billingReason = 'only priceTon is set on customer';
     } else {
-      // Neither set - use default
       billByYard = false;
-      billingReason = 'no customer pricing, using default';
+      billingReason = 'no pricing method found, defaulting to ton';
     }
-    
+
     console.log(`  -> billByYard=${billByYard} (${billingReason})`);
-    
+
     // Determine quantity and price based on billing method
+    // v75: Prefer ticket's own customerRate over customer record price
     let quantity, pricePerUnit;
-    
+
     if (billByYard) {
-      // Bill by yards
+      // Bill by yards — use ticket rate, fallback to customer record, fallback to default
       quantity = Math.round(yards * 100) / 100;
-      pricePerUnit = customer.priceYard || 13;  // Default $13/yard
-      console.log(`Ticket ${ticket.number}: BILLING BY YARD - ${quantity} yards @ $${pricePerUnit}/yard`);
+      pricePerUnit = ticket.customerRate || customer.priceYard || 13;
+      console.log(`Ticket ${ticket.number}: BILLING BY YARD - ${quantity} yards @ $${pricePerUnit}/yard (rate from: ${ticket.customerRate ? 'ticket' : customer.priceYard ? 'customer record' : 'default'})`);
     } else {
-      // Bill by tons
+      // Bill by tons — use ticket rate, fallback to customer record, fallback to product default
       quantity = Math.round(tons * 100) / 100;
-      pricePerUnit = customer.priceTon || product.pricePerTon || 13;  // Customer rate, or product rate, or $13 default
-      console.log(`Ticket ${ticket.number}: BILLING BY TON - ${quantity} tons @ $${pricePerUnit}/ton`);
+      pricePerUnit = ticket.customerRate || customer.priceTon || product.pricePerTon || 13;
+      console.log(`Ticket ${ticket.number}: BILLING BY TON - ${quantity} tons @ $${pricePerUnit}/ton (rate from: ${ticket.customerRate ? 'ticket' : customer.priceTon ? 'customer record' : 'product/default'})`);
     }
     
     // v69: Ensure price is rounded to 2 decimals
