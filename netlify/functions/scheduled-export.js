@@ -86,7 +86,7 @@ async function getUnexportedClosedTickets() {
     truckText: r.fields['Truck Text'] || '',
     netTons: r.fields['Net Tons'] || 0,
     netYards: r.fields['Net Yards'] || 0,
-    pricePerTon: r.fields['Price Per Ton'] || 13,
+    pricePerTon: r.fields['Price Per Ton'] || 14,
     pumiceCharge: r.fields['Pumice Charge'] || 0,
     totalCharge: r.fields['Total Charge'] || 0,
     address: r.fields['Customer Address'] || '',

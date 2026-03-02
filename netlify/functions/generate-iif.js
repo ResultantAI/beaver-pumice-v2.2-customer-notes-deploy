@@ -313,7 +313,7 @@ async function fetchProducts(token, baseId) {
       id: record.id,
       name: record.fields['Product Name'] || '',
       lbsPerYard: record.fields['Weight Per Cubic Yard'] || 1350,
-      pricePerTon: record.fields['Price Per Ton'] || 13,
+      pricePerTon: record.fields['Price Per Ton'] || 14,
       qbItemCode: qbCode
     };
     products[record.id] = productData;
@@ -403,7 +403,7 @@ function generateInvoiceLines(invoiceNum, invoiceDate, customer, tickets, produc
       lookupMethod = 'byName';
     }
     if (!product) {
-      product = { name: ticket.productName, pricePerTon: 13, qbItemCode: null };
+      product = { name: ticket.productName, pricePerTon: 14, qbItemCode: null };
       lookupMethod = 'fallback';
     }
     
@@ -471,12 +471,12 @@ function generateInvoiceLines(invoiceNum, invoiceDate, customer, tickets, produc
     if (billByYard) {
       // Bill by yards — use ticket rate, fallback to customer record, fallback to default
       quantity = Math.round(yards * 100) / 100;
-      pricePerUnit = ticket.customerRate || customer.priceYard || 13;
+      pricePerUnit = ticket.customerRate || customer.priceYard || 14;
       console.log(`Ticket ${ticket.number}: BILLING BY YARD - ${quantity} yards @ $${pricePerUnit}/yard (rate from: ${ticket.customerRate ? 'ticket' : customer.priceYard ? 'customer record' : 'default'})`);
     } else {
       // Bill by tons — use ticket rate, fallback to customer record, fallback to product default
       quantity = Math.round(tons * 100) / 100;
-      pricePerUnit = ticket.customerRate || customer.priceTon || product.pricePerTon || 13;
+      pricePerUnit = ticket.customerRate || customer.priceTon || product.pricePerTon || 14;
       console.log(`Ticket ${ticket.number}: BILLING BY TON - ${quantity} tons @ $${pricePerUnit}/ton (rate from: ${ticket.customerRate ? 'ticket' : customer.priceTon ? 'customer record' : 'product/default'})`);
     }
     

@@ -328,10 +328,10 @@ function generateIIF(tickets, customers, products, invoiceDate, startingInvoiceN
       // v74: PRIORITY for pricing data:
       // 1. Ticket's lookup fields (snapshot at ticket creation time) - MOST RELIABLE
       // 2. Customer table data (current values)
-      // 3. Default ($13)
-      
+      // 3. Default ($14)
+
       let billByYard = false;
-      let pricePerUnit = 13;  // Default
+      let pricePerUnit = 14;  // Default
       let pricingSource = 'default';
       
       // First try: Use ticket's lookup fields (if available)
@@ -344,8 +344,8 @@ function generateIIF(tickets, customers, products, invoiceDate, startingInvoiceN
       // Second try: Use customer table data
       else if (customer.pricingMethod || customer.priceTon || customer.priceYard || customer.customerRate) {
         const method = (customer.pricingMethod || '').toLowerCase();
-        const effectiveTonRate = customer.priceTon || customer.customerRate || 13;
-        const effectiveYardRate = customer.priceYard || customer.customerRate || 13;
+        const effectiveTonRate = customer.priceTon || customer.customerRate || 14;
+        const effectiveYardRate = customer.priceYard || customer.customerRate || 14;
         
         if (method.includes('yard')) {
           billByYard = true;
