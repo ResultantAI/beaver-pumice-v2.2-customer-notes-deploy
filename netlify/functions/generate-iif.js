@@ -553,17 +553,15 @@ function generateInvoiceLines(invoiceNum, invoiceDate, customer, tickets, produc
       freightAmount = Math.round(freightQty * freightPrice * 100) / 100;
       console.log(`  -> Freight PER TON: ${freightQty} tons @ $${freightPrice}/ton = $${freightAmount}`);
     } else if (hasFreightRate) {
-      // No explicit method but has rate - match product billing unit
-      if (billByYard && yards > 0) {
-        freightQty = Math.round(yards * 100) / 100;
-        freightPrice = Math.round(freightRateValue * 100) / 100;
-        freightAmount = Math.round(freightQty * freightPrice * 100) / 100;
-        console.log(`  -> Freight (matching product yard): ${freightQty} yards @ $${freightPrice}/yard = $${freightAmount}`);
-      } else if (tons > 0) {
+      // No explicit method but has rate - always default to per_ton.
+      // Freight billing is always weight-based regardless of how the product is billed.
+      // This prevents per-yard product customers (e.g. Granite) from having freight
+      // incorrectly charged per yard when Freight Unit is not explicitly set.
+      if (tons > 0) {
         freightQty = Math.round(tons * 100) / 100;
         freightPrice = Math.round(freightRateValue * 100) / 100;
         freightAmount = Math.round(freightQty * freightPrice * 100) / 100;
-        console.log(`  -> Freight (matching product ton): ${freightQty} tons @ $${freightPrice}/ton = $${freightAmount}`);
+        console.log(`  -> Freight (default per-ton fallback): ${freightQty} tons @ $${freightPrice}/ton = $${freightAmount}`);
       } else {
         // Flat freight
         freightQty = 1;
