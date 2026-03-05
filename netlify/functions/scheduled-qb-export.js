@@ -401,16 +401,28 @@ function generateIIF(tickets, customers, products, invoiceDate, startingInvoiceN
         'N'
       ].join('\t'));
       
-      // v76: Freight line - use Airtable's calculated value OR calculate from rate
-      let freightAmount = ticket.freightCharge || 0;
-      
-      // If no freight charge but we have freight rate, calculate it
-      if (freightAmount === 0 && ticket.freightRate && ticket.freightRate > 0) {
-        // Use same qty as product (tons or yards based on billing method)
-        freightAmount = Math.round(qty * ticket.freightRate * 100) / 100;
-        console.log(`  Freight calculated: ${qty} × $${ticket.freightRate} = $${freightAmount}`);
+      // v77: Freight line — always use netTons + explicit rate so Price Each is never back-calculated
+      // Granite Construction: $60/ton hardcoded (freightRate field not populated in Airtable for this customer)
+      const isGranite = customerName && customerName.toLowerCase().includes('granite');
+      let freightRate = ticket.freightRate;
+      if (!freightRate && isGranite) freightRate = 60;
+
+      let freightAmount, freightQtyForLine, freightPriceForLine;
+
+      if (freightRate && freightRate > 0 && ticket.netTons > 0) {
+        // Rate × tons: AMOUNT, QNTY, PRICE all consistent → QB shows correct Price Each
+        freightQtyForLine  = Math.round(ticket.netTons * 100) / 100;
+        freightPriceForLine = freightRate;
+        freightAmount      = Math.round(freightQtyForLine * freightRate * 100) / 100;
+        console.log(`  Freight (rate-based): ${freightQtyForLine} tons × $${freightRate} = $${freightAmount}`);
+      } else {
+        // Fallback: flat charge from Airtable, qty=1 so Price Each = amount (no back-calc)
+        freightAmount       = ticket.freightCharge || 0;
+        freightQtyForLine   = 1;
+        freightPriceForLine = freightAmount;
+        if (freightAmount > 0) console.log(`  Freight (flat fallback): $${freightAmount}`);
       }
-      
+
       if (freightAmount > 0) {
         totalAmount += freightAmount;
         splLines.push([
@@ -418,12 +430,12 @@ function generateIIF(tickets, customers, products, invoiceDate, startingInvoiceN
           (-freightAmount).toFixed(2),
           invoiceNum,
           `Freight - Ticket ${ticket.number}`,
-          `-${qty.toFixed(2)}`,  // v76: Use same qty as product
-          ticket.freightRate ? ticket.freightRate.toFixed(2) : freightAmount.toFixed(2),
+          `-${freightQtyForLine.toFixed(2)}`,  // v77: tons (or 1 for flat)
+          freightPriceForLine.toFixed(2),       // v77: actual rate — never back-calculated
           'Freight',
           'N'
         ].join('\t'));
-        console.log(`  Freight added: $${freightAmount}`);
+        console.log(`  Freight added: $${freightAmount} (${freightQtyForLine} × $${freightPriceForLine})`);
       }
     }
     
