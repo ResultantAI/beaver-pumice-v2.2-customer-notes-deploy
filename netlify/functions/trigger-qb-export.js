@@ -1,4 +1,6 @@
 // netlify/functions/trigger-qb-export.js
+// v77 - FIX: Always recalculate freight from customer.freightRate × tons.
+//             Never trust ticket.freightCharge (stale Airtable field, wrong rate).
 // v74 - COMPREHENSIVE FIX: Proper pricing from customers, QB codes from products
 // Manual trigger for QuickBooks export - called from Reports tab
 
@@ -434,25 +436,32 @@ function generateIIF(tickets, customers, products, invoiceDate, startingInvoiceN
         'N'
       ].join('\t'));
       
-      // v76: Freight line - use Airtable's calculated value OR calculate from rate
-      let freightAmount = ticket.freightCharge || 0;
-      
-      // If no freight charge but we have freight rate, calculate it
-      if (freightAmount === 0 && ticket.freightRate && ticket.freightRate > 0) {
-        // Use same qty as product (tons or yards based on billing method)
-        freightAmount = Math.round(qty * ticket.freightRate * 100) / 100;
-        console.log(`  Freight calculated: ${qty} × $${ticket.freightRate} = $${freightAmount}`);
+      // v77: Freight line - ALWAYS recalculate from customer's Freight Rate.
+      // Never trust ticket.freightCharge - it is an Airtable-stored value that can be
+      // stale or incorrectly calculated (e.g. Granite: stored $1,813 but correct is $3,052).
+      // Source of truth: customer.freightRate (fetched fresh) × tons.
+      const customerFreightRate = customer.freightRate || null;
+      let freightAmount = 0;
+
+      if (customerFreightRate && customerFreightRate > 0) {
+        // Always charge freight per ton (weight-based), regardless of how product is billed
+        const freightQty = Math.round(ticket.netTons * 100) / 100;
+        freightAmount = Math.round(freightQty * customerFreightRate * 100) / 100;
+        console.log(`  Freight (v77 from customer rate): ${freightQty} tons × $${customerFreightRate} = $${freightAmount}`);
+      } else {
+        console.log(`  No freight - customer has no Freight Rate configured`);
       }
-      
+
       if (freightAmount > 0) {
+        const freightQty = Math.round(ticket.netTons * 100) / 100;
         totalAmount += freightAmount;
         splLines.push([
           'SPL', invoiceNum, 'INVOICE', invoiceDate, 'Sales', customerName,
           (-freightAmount).toFixed(2),
           invoiceNum,
           `Freight - Ticket ${ticket.number}`,
-          `-${qty.toFixed(2)}`,  // v76: Use same qty as product
-          ticket.freightRate ? ticket.freightRate.toFixed(2) : freightAmount.toFixed(2),
+          (-freightQty).toFixed(2),
+          customerFreightRate.toFixed(2),
           'Freight',
           'N'
         ].join('\t'));
