@@ -436,24 +436,28 @@ function generateIIF(tickets, customers, products, invoiceDate, startingInvoiceN
         'N'
       ].join('\t'));
       
-      // v77: Freight line - ALWAYS recalculate from customer's Freight Rate.
-      // Never trust ticket.freightCharge - it is an Airtable-stored value that can be
-      // stale or incorrectly calculated (e.g. Granite: stored $1,813 but correct is $3,052).
-      // Source of truth: customer.freightRate (fetched fresh) × tons.
+      // v78: Freight line - recalculate from customer's Freight Rate + Freight Method.
+      // Respect freightMethod: per-yard customers (e.g. EB Stone) must use netYards,
+      // per-ton customers use netTons. Using the wrong unit causes fractional Price Each.
       const customerFreightRate = customer.freightRate || null;
+      const freightMethodRaw = (customer.freightMethod || '').toLowerCase();
+      const isFreightPerYard = freightMethodRaw.includes('yard');
       let freightAmount = 0;
 
       if (customerFreightRate && customerFreightRate > 0) {
-        // Always charge freight per ton (weight-based), regardless of how product is billed
-        const freightQty = Math.round(ticket.netTons * 100) / 100;
+        const freightQty = isFreightPerYard
+          ? Math.round(ticket.netYards * 100) / 100
+          : Math.round(ticket.netTons * 100) / 100;
         freightAmount = Math.round(freightQty * customerFreightRate * 100) / 100;
-        console.log(`  Freight (v77 from customer rate): ${freightQty} tons × $${customerFreightRate} = $${freightAmount}`);
+        console.log(`  Freight (v78 ${isFreightPerYard ? 'per yard' : 'per ton'}): ${freightQty} ${isFreightPerYard ? 'yards' : 'tons'} × $${customerFreightRate} = $${freightAmount}`);
       } else {
         console.log(`  No freight - customer has no Freight Rate configured`);
       }
 
       if (freightAmount > 0) {
-        const freightQty = Math.round(ticket.netTons * 100) / 100;
+        const freightQty = isFreightPerYard
+          ? Math.round(ticket.netYards * 100) / 100
+          : Math.round(ticket.netTons * 100) / 100;
         totalAmount += freightAmount;
         splLines.push([
           'SPL', invoiceNum, 'INVOICE', invoiceDate, 'Sales', customerName,
