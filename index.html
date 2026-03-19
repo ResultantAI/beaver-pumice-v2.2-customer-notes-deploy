@@ -867,7 +867,7 @@
             <p class="text-slate-500 text-xs">92777 HWY 97 N • Chemult, Oregon 97731</p>
           </div>
         </div>
-        <p class="text-slate-500">v2.3 &nbsp;|&nbsp; Built by <span class="text-gold-400 font-medium">ResultantAI</span></p>
+        <p class="text-slate-500">v2.4 &nbsp;|&nbsp; Built by <span class="text-gold-400 font-medium">ResultantAI</span></p>
       </div>
     </footer>
 
@@ -1039,6 +1039,10 @@
           </div>
         </div>
         <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Freight Rate ($/ton) <span class="text-slate-400 font-normal">(what customer pays for freight per ton)</span></label>
+          <input type="number" name="freightRate" step="0.01" placeholder="$0.00" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
+        </div>
+        <div>
           <label class="block text-sm font-semibold text-slate-700 mb-1">Pricing Method <span class="text-slate-400 font-normal">(used for invoice export)</span></label>
           <select name="pricingMethod" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
             <option value="">-- Auto-detect from price --</option>
@@ -1111,6 +1115,10 @@
             <label class="block text-sm font-semibold text-slate-700 mb-1">Price/Ton</label>
             <input type="number" name="priceTon" id="edit-customer-priceTon" step="0.01" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
           </div>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-1">Freight Rate ($/ton) <span class="text-slate-400 font-normal">(what customer pays for freight per ton)</span></label>
+          <input type="number" name="freightRate" id="edit-customer-freightRate" step="0.01" class="w-full px-4 py-2.5 border-2 border-slate-200 rounded-xl focus:border-gold-500">
         </div>
         <div>
           <label class="block text-sm font-semibold text-slate-700 mb-1">Default Ticket Notes <span class="text-slate-400 font-normal">(will appear on all tickets for this customer)</span></label>
@@ -2355,8 +2363,11 @@
             <div class="w-10 h-10 bg-gold-100 rounded-lg flex items-center justify-center">
               <span class="text-gold-700 font-bold">${c.name.charAt(0)}</span>
             </div>
-            ${c.priceYard ? `<span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700">$${c.priceYard}/yd</span>` : 
-              c.priceTon ? `<span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">$${c.priceTon}/ton</span>` : ''}
+            <div class="flex flex-col gap-1 items-end">
+              ${c.priceYard ? `<span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700">$${c.priceYard}/yd</span>` :
+                c.priceTon ? `<span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">$${c.priceTon}/ton</span>` : ''}
+              ${c.freightRate ? `<span class="text-xs px-2 py-1 rounded-full bg-orange-100 text-orange-700">$${c.freightRate}/ton freight</span>` : ''}
+            </div>
           </div>
           <p class="font-semibold text-slate-900">${c.name}</p>
           <p class="text-sm text-slate-500 mt-1">${[c.city, c.state].filter(Boolean).join(', ') || 'No location'}</p>
@@ -2376,8 +2387,9 @@
           <td class="px-4 py-3 text-slate-600 hidden md:table-cell">${[c.city, c.state].filter(Boolean).join(', ') || '—'}</td>
           <td class="px-4 py-3 text-slate-600 hidden lg:table-cell">${c.phone || '—'}</td>
           <td class="px-4 py-3">
-            ${c.priceYard ? `<span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700">$${c.priceYard}/yd</span>` : 
+            ${c.priceYard ? `<span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-700">$${c.priceYard}/yd</span>` :
               c.priceTon ? `<span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">$${c.priceTon}/ton</span>` : '—'}
+            ${c.freightRate ? `<span class="text-xs px-2 py-1 rounded-full bg-orange-100 text-orange-700 ml-1">$${c.freightRate} freight</span>` : ''}
           </td>
           <td class="px-4 py-3 text-center">
             ${isAdmin ? `<button type="button" onclick="openEditCustomerModal('${c.id}')" class="text-gold-600 hover:text-gold-700 text-sm font-semibold">Edit</button>` : '—'}
@@ -2598,6 +2610,7 @@
         zip: formData.get('zip') || '',
         priceYard: parseFloat(formData.get('priceYard')) || null,
         priceTon: parseFloat(formData.get('priceTon')) || null,
+        freightRate: parseFloat(formData.get('freightRate')) || null,
         pricingMethod: formData.get('pricingMethod') || '',
         notes: formData.get('notes') || '',
       };
@@ -2636,6 +2649,7 @@
       document.getElementById('edit-customer-zip').value = customer.zip || '';
       document.getElementById('edit-customer-priceYard').value = customer.priceYard || '';
       document.getElementById('edit-customer-priceTon').value = customer.priceTon || '';
+      document.getElementById('edit-customer-freightRate').value = customer.freightRate || '';
       document.getElementById('edit-customer-notes').value = customer.notes || '';
 
       openModal('edit-customer-modal');
@@ -2664,6 +2678,7 @@
         zip: formData.get('zip') || '',
         priceYard: parseFloat(formData.get('priceYard')) || null,
         priceTon: parseFloat(formData.get('priceTon')) || null,
+        freightRate: parseFloat(formData.get('freightRate')) || null,
         notes: formData.get('notes') || '',
       };
       

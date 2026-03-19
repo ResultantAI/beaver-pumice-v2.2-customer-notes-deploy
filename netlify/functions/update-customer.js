@@ -64,6 +64,14 @@ exports.handler = async (event, context) => {
       fields['Price Ton'] = null;
     }
 
+    // Freight Rate (what customer pays per ton for freight)
+    if (customer.freightRate !== null && customer.freightRate !== undefined && customer.freightRate !== '') {
+      const fr = parseFloat(customer.freightRate);
+      if (!isNaN(fr)) { fields['Freight Rate'] = fr; }
+    } else {
+      fields['Freight Rate'] = null;
+    }
+
     // Optional fields: Customer Rate + Customer Pricing Method
     // These are the source fields for Airtable lookup fields on tickets.
     const optionalFields = {};
@@ -131,6 +139,7 @@ exports.handler = async (event, context) => {
           zip: record.fields['Zip'] || '',
           priceYard: record.fields['Price Yard'] || null,
           priceTon: record.fields['Price Ton'] || null,
+          freightRate: record.fields['Freight Rate'] || null,
           notes: record.fields['Notes'] || record.fields['Default Note'] || '',
         }
       })

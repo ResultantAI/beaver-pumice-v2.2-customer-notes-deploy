@@ -56,6 +56,7 @@ exports.handler = async (event, context) => {
         zip: record.fields['Zip'] || '',
         priceYard: record.fields['Price Yard'] || null,
         priceTon: record.fields['Price Ton'] || null,
+        freightRate: record.fields['Freight Rate'] || null,
         notes: record.fields['Notes'] || record.fields['Default Note'] || '',
       }));
 
