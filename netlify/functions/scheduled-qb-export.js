@@ -401,26 +401,27 @@ function generateIIF(tickets, customers, products, invoiceDate, startingInvoiceN
         'N'
       ].join('\t'));
       
-      // v77: Freight line — always use netTons + explicit rate so Price Each is never back-calculated
-      // Granite Construction: $60/ton hardcoded (freightRate field not populated in Airtable for this customer)
-      const isGranite = customerName && customerName.toLowerCase().includes('granite');
-      let freightRate = ticket.freightRate;
-      if (!freightRate && isGranite) freightRate = 60;
+      // v79: Use customer.freightRate (live from Airtable Customers table) — not ticket.freightRate
+      // (which is a lookup/stored field that can hold stale values from months ago).
+      // customer.freightRate is always freshly fetched in fetchCustomersWithPricing().
+      // This was the root cause of the Granite freight bug: scheduled export used ticket.freightRate
+      // (stale $35.64/ton) while manual export used customer.freightRate ($60/ton) correctly.
+      const freightMethodRaw = (customer.freightMethod || '').toLowerCase();
+      const isFreightPerYard = freightMethodRaw.includes('yard');
+      // Priority: customer record (fresh) → ticket lookup (fallback if customer field blank)
+      const customerFreightRate = customer.freightRate || ticket.freightRate || null;
 
-      let freightAmount, freightQtyForLine, freightPriceForLine;
+      let freightAmount = 0, freightQtyForLine = 0, freightPriceForLine = 0;
 
-      if (freightRate && freightRate > 0 && ticket.netTons > 0) {
-        // Rate × tons: AMOUNT, QNTY, PRICE all consistent → QB shows correct Price Each
-        freightQtyForLine  = Math.round(ticket.netTons * 100) / 100;
-        freightPriceForLine = freightRate;
-        freightAmount      = Math.round(freightQtyForLine * freightRate * 100) / 100;
-        console.log(`  Freight (rate-based): ${freightQtyForLine} tons × $${freightRate} = $${freightAmount}`);
+      if (customerFreightRate && customerFreightRate > 0) {
+        freightQtyForLine = isFreightPerYard
+          ? Math.round(ticket.netYards * 100) / 100
+          : Math.round(ticket.netTons * 100) / 100;
+        freightPriceForLine = customerFreightRate;
+        freightAmount = Math.round(freightQtyForLine * customerFreightRate * 100) / 100;
+        console.log(`  Freight (v79 ${isFreightPerYard ? 'per yard' : 'per ton'}): ${freightQtyForLine} × $${customerFreightRate} = $${freightAmount}`);
       } else {
-        // Fallback: flat charge from Airtable, qty=1 so Price Each = amount (no back-calc)
-        freightAmount       = ticket.freightCharge || 0;
-        freightQtyForLine   = 1;
-        freightPriceForLine = freightAmount;
-        if (freightAmount > 0) console.log(`  Freight (flat fallback): $${freightAmount}`);
+        console.log(`  No freight - customer has no Freight Rate configured`);
       }
 
       if (freightAmount > 0) {
