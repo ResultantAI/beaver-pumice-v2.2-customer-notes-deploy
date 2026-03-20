@@ -436,10 +436,17 @@ function generateIIF(tickets, customers, products, invoiceDate, startingInvoiceN
         'N'
       ].join('\t'));
       
-      // v78: Freight line - recalculate from customer's Freight Rate + Freight Method.
+      // v80: Freight line - recalculate from customer's Freight Rate + Freight Method.
       // Respect freightMethod: per-yard customers (e.g. EB Stone) must use netYards,
       // per-ton customers use netTons. Using the wrong unit causes fractional Price Each.
-      const customerFreightRate = customer.freightRate || null;
+      // v80 FIX: Round the rate to 2dp BEFORE computing freightAmount so that
+      // PRICE and AMOUNT are always consistent. If Airtable stores a stale rate like
+      // 36.33351, the old code computed AMOUNT=37.42×36.33351=1359.60 but output
+      // PRICE=36.33 — QB back-calculated 1359.60÷37.42=36.33351 and showed extra decimals.
+      const customerFreightRateRaw = customer.freightRate || null;
+      const customerFreightRate = customerFreightRateRaw
+        ? Math.round(customerFreightRateRaw * 100) / 100
+        : null;
       const freightMethodRaw = (customer.freightMethod || '').toLowerCase();
       const isFreightPerYard = freightMethodRaw.includes('yard');
       let freightAmount = 0;
@@ -449,7 +456,7 @@ function generateIIF(tickets, customers, products, invoiceDate, startingInvoiceN
           ? Math.round(ticket.netYards * 100) / 100
           : Math.round(ticket.netTons * 100) / 100;
         freightAmount = Math.round(freightQty * customerFreightRate * 100) / 100;
-        console.log(`  Freight (v78 ${isFreightPerYard ? 'per yard' : 'per ton'}): ${freightQty} ${isFreightPerYard ? 'yards' : 'tons'} × $${customerFreightRate} = $${freightAmount}`);
+        console.log(`  Freight (v80 ${isFreightPerYard ? 'per yard' : 'per ton'}): ${freightQty} ${isFreightPerYard ? 'yards' : 'tons'} × $${customerFreightRate} = $${freightAmount}`);
       } else {
         console.log(`  No freight - customer has no Freight Rate configured`);
       }

@@ -401,15 +401,20 @@ function generateIIF(tickets, customers, products, invoiceDate, startingInvoiceN
         'N'
       ].join('\t'));
       
-      // v79: Use customer.freightRate (live from Airtable Customers table) — not ticket.freightRate
+      // v80: Use customer.freightRate (live from Airtable Customers table) — not ticket.freightRate
       // (which is a lookup/stored field that can hold stale values from months ago).
       // customer.freightRate is always freshly fetched in fetchCustomersWithPricing().
-      // This was the root cause of the Granite freight bug: scheduled export used ticket.freightRate
-      // (stale $35.64/ton) while manual export used customer.freightRate ($60/ton) correctly.
+      // v80 FIX: Round the rate to 2dp BEFORE computing freightAmount so that
+      // PRICE and AMOUNT are always consistent. If Airtable stores a stale rate like
+      // 36.33351, the old code computed AMOUNT=qty×36.33351 but output PRICE=36.33 —
+      // QB back-calculated the unit price from AMOUNT÷QNTY and showed extra decimals.
       const freightMethodRaw = (customer.freightMethod || '').toLowerCase();
       const isFreightPerYard = freightMethodRaw.includes('yard');
       // Priority: customer record (fresh) → ticket lookup (fallback if customer field blank)
-      const customerFreightRate = customer.freightRate || ticket.freightRate || null;
+      const customerFreightRateRaw = customer.freightRate || ticket.freightRate || null;
+      const customerFreightRate = customerFreightRateRaw
+        ? Math.round(customerFreightRateRaw * 100) / 100
+        : null;
 
       let freightAmount = 0, freightQtyForLine = 0, freightPriceForLine = 0;
 
@@ -419,7 +424,7 @@ function generateIIF(tickets, customers, products, invoiceDate, startingInvoiceN
           : Math.round(ticket.netTons * 100) / 100;
         freightPriceForLine = customerFreightRate;
         freightAmount = Math.round(freightQtyForLine * customerFreightRate * 100) / 100;
-        console.log(`  Freight (v79 ${isFreightPerYard ? 'per yard' : 'per ton'}): ${freightQtyForLine} × $${customerFreightRate} = $${freightAmount}`);
+        console.log(`  Freight (v80 ${isFreightPerYard ? 'per yard' : 'per ton'}): ${freightQtyForLine} × $${customerFreightRate} = $${freightAmount}`);
       } else {
         console.log(`  No freight - customer has no Freight Rate configured`);
       }
